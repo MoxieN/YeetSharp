@@ -1,6 +1,6 @@
 # main/YeetSharp
 
-A .NET emulator for the Yeet CPU architecture
+A .NET emulator for the Yeet-8 CPU architecture
 
 ## Getting Started
 
