@@ -1,4 +1,4 @@
-namespace YeetSharp;
+namespace Yeet.Common;
 
 public static class OpCode
 {

@@ -1,6 +1,7 @@
 using System.Data;
+using Yeet.Common;
 
-namespace YeetSharp.Assembler;
+namespace Yeet8.Assembler;
 
 public static class Lexer
 {

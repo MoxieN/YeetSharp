@@ -1,6 +1,6 @@
 using System.Text;
 
-namespace YeetSharp;
+namespace Yeet8;
 
 public static class Instruction
 {

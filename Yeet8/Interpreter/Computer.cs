@@ -1,4 +1,4 @@
-namespace YeetSharp.Interpreter;
+namespace Yeet8.Interpreter;
 
 public static class Computer
 {
