@@ -5,7 +5,7 @@ namespace Yeet8.Assembler;
 
 public static class Parse
 {
-    public static byte[] ParseInstructions(AsmInstruction[] asmInstructions)
+    public static byte[] ParseInstructions(IEnumerable<AsmInstruction> asmInstructions)
     {
         var code = new List<byte>();
 

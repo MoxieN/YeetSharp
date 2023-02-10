@@ -40,10 +40,7 @@ public static class Executor
 
                     var result = add1 + add2;
                     if (result > byte.MaxValue)
-                    {
-                        Console.WriteLine($"EXECUTION HALTED: Value reached max value: {result}");
-                        for(;;) { }
-                    }
+                        Utils.Abort($"Value reached max value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -55,10 +52,7 @@ public static class Executor
 
                     var result = sub1 - sub2;
                     if (result < byte.MinValue)
-                    {
-                        Console.WriteLine($"EXECUTION HALTED: Value reached min value: {result}");
-                        for(;;) { }
-                    }
+                        Utils.Abort($"Value reached min value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -70,10 +64,7 @@ public static class Executor
 
                     var result = mul1 * mul2;
                     if (result > byte.MaxValue)
-                    {
-                        Console.WriteLine($"EXECUTION HALTED: Value reached max value: {result}");
-                        for(;;) { }
-                    }
+                        Utils.Abort($"Value reached max value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -85,10 +76,7 @@ public static class Executor
 
                     var result = div1 / div2;
                     if (result < byte.MinValue)
-                    {
-                        Console.WriteLine($"EXECUTION HALTED: Value reached min value: {result}");
-                        for(;;) { }
-                    }
+                        Utils.Abort($"Value reached min value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -132,10 +120,22 @@ public static class Executor
                     SetRegister(op1, (byte)result);
                     break;
                 }
-                case OpCode.Shl: break;
-                case OpCode.Shr: break;
-                case OpCode.Sal: break;
-                case OpCode.Sar: break;
+                case OpCode.Shl:
+                {
+                    throw new NotImplementedException();
+                }
+                case OpCode.Shr:
+                {
+                    throw new NotImplementedException();
+                }
+                case OpCode.Sal:
+                {
+                    throw new NotImplementedException();
+                }
+                case OpCode.Sar:
+                {
+                    throw new NotImplementedException();
+                }
                 case OpCode.Read:
                 {
                     var address = (flags & Flag.Op2Register) != 0 ? GetRegister(op2) : op2;
@@ -273,10 +273,7 @@ public static class Executor
     private static void Push(byte value)
     {
         if (Computer.R0 >= Computer.StackSize)
-        {
-            Console.WriteLine($"EXECUTION HALTED: SP ({Computer.R0}) >= Stack size ({Computer.StackSize})");
-            for (;;) { }
-        }
+            Utils.Abort($"SP ({Computer.R0}) >= Stack size ({Computer.StackSize})");
 
         Computer.MemoryWrite(Computer.R0++, value);
     }
@@ -285,12 +282,12 @@ public static class Executor
     {
         if (Computer.R0 == 0)
         {
-            Console.WriteLine($"EXECUTION HALTED: SP ({Computer.R0}) == 0");
-            for (;;) { }
+            var value = Computer.MemoryRead(--Computer.R0);
+            SetRegister(register, value);
+            return;
         }
 
-        var value = Computer.MemoryRead(--Computer.R0);
-        SetRegister(register, value);
+        Utils.Abort($"SP ({Computer.R0}) == 0");
     }
 
     private static void In(byte register, byte port)
@@ -348,10 +345,7 @@ public static class Executor
     private static byte Pop()
     {
         if (Computer.R0 == 0)
-        {
-            Console.WriteLine($"EXECUTION HALTED: SP ({Computer.R0}) == 0");
-            for (;;) { }
-        }
+            Utils.Abort($"SP ({Computer.R0}) == 0");
 
         return Computer.MemoryRead(--Computer.R0);
     }

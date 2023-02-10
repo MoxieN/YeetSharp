@@ -5,7 +5,7 @@ namespace Yeet8.Assembler;
 
 public static class Lexer
 {
-    public static AsmInstruction[] LexInstructions(string file, params string[] arguments)
+    public static AsmInstruction[] LexInstructions(string file)
     {
         if (!File.Exists(file)) throw new FileNotFoundException("LEXER HALTED: FileNotFound Exception");
 
