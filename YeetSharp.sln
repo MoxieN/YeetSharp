@@ -1,0 +1,34 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.0.31903.59
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YeetSharp", "YeetSharp\YeetSharp.csproj", "{C4C86899-1690-40C0-94E7-5B7B766093AE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet8", "Yeet8\Yeet8.csproj", "{6D172CD4-9708-4007-B9FD-ACFD742727D2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet.Common", "Yeet.Common\Yeet.Common.csproj", "{01378EF9-E5E9-4462-B115-92569C68AC08}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{C4C86899-1690-40C0-94E7-5B7B766093AE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C4C86899-1690-40C0-94E7-5B7B766093AE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C4C86899-1690-40C0-94E7-5B7B766093AE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C4C86899-1690-40C0-94E7-5B7B766093AE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6D172CD4-9708-4007-B9FD-ACFD742727D2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6D172CD4-9708-4007-B9FD-ACFD742727D2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6D172CD4-9708-4007-B9FD-ACFD742727D2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6D172CD4-9708-4007-B9FD-ACFD742727D2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{01378EF9-E5E9-4462-B115-92569C68AC08}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{01378EF9-E5E9-4462-B115-92569C68AC08}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{01378EF9-E5E9-4462-B115-92569C68AC08}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{01378EF9-E5E9-4462-B115-92569C68AC08}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+EndGlobal
