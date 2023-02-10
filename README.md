@@ -1,17 +1,22 @@
-# main/YeetSharp
 
-A .NET emulator for the Yeet-8 CPU architecture
+# YeetSharp
 
-## Getting Started
+.NET CPU emulator for Yeet architectures
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/MoxieN/YeetSharp/code_quality.yml?label=Code%20Quality)
+![GitHub Workflow Status](https://img.shields.io/github/actions/workflow/status/MoxieN/YeetSharp/dotnet.yml?label=Current%20build)[![GPLv3 License](https://img.shields.io/badge/License-GPL%20v2-yellow.svg)](https://opensource.org/licenses/)
 
-## Prerequisites
 
-What things you need to install the software and how to install them.
 
-`dotnet7.0`
+## Documentation
 
-## Deployment
+[Documentation](https://sartox.jetbrains.space/p/main/documents/Yeet-8/a/Specifications?mode=edit)
 
-`dotnet run`
+
+## Features
+
+- Yeet-8
+- Yeet-16 (not available)
+- Yeet-32 (not available)
+- Yeet-64 (not available)
+
