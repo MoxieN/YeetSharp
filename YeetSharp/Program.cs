@@ -8,4 +8,4 @@ var push4 = Instruction.Create(OpCode.Push, Flag.Op1Register, Register.R3);
 Console.WriteLine($"[write r2, 5] = 0x{write1:X4}");
 Console.WriteLine($"[out 0x02, r2] = 0x{out2:X4}");
 Console.WriteLine($"[in r3, 0x02] = 0x{in3:X4}");
-Console.WriteLine($"[push r3] = 0x{push4:X4}");
+Console.WriteLine($"[push r3] = 0x{push4:X4}"); //
