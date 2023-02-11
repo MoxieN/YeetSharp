@@ -280,7 +280,7 @@ public static class Executor
 
     private static void Pop(byte register)
     {
-        if (Computer.R0 == 0)
+        if (Computer.R0 != 0)
         {
             var value = Computer.MemoryRead(--Computer.R0);
             SetRegister(register, value);
@@ -345,7 +345,9 @@ public static class Executor
     private static byte Pop()
     {
         if (Computer.R0 == 0)
+        {
             Utils.Abort($"SP ({Computer.R0}) == 0");
+        }
 
         return Computer.MemoryRead(--Computer.R0);
     }

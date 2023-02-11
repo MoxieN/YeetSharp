@@ -4,7 +4,10 @@ public static class Utils
 {
     public static void Abort(string message)
     {
-        Console.WriteLine($"EXECUTION HALTED: {message}");
+        Console.ForegroundColor = ConsoleColor.Red;
+        Console.Write("EXECUTION HALTED");
+        Console.ForegroundColor = ConsoleColor.White;
+        Console.WriteLine($": {message}");
         Environment.Exit(1);
     }
 }
