@@ -10,7 +10,7 @@
 
 ## Documentation
 
-[Documentation](https://sartox.jetbrains.space/p/main/documents/Yeet-8/a/Specifications?mode=edit)
+[Documentation](https://github.com/MoxieN/YeetSharp/tree/main/Docs)
 
 
 ## Features
