@@ -5,12 +5,11 @@ const bool yeet8 = false;
 
 if (yeet64)
 {
-    var tokens = Yeet64.Assembler.Lexer.LexInstructions("yeet64test.asm").Where(x => x.Type
-        is not Yeet64.Assembler.Lexer.TokenType.Comma
-        and not Yeet64.Assembler.Lexer.TokenType.Comment
-        and not Yeet64.Assembler.Lexer.TokenType.Whitespace
-    ).ToArray();
-    var code = Yeet64.Assembler.Parser.ParseInstructions(tokens);
+    var lexer = new Yeet64.Assembler.Lexer("yeet64test.asm", false, false, false);
+    var tokens = lexer.Run();
+
+    var parser = new Yeet64.Assembler.Parser(ref tokens);
+    var code = parser.Run();
 
     Yeet64.Interpreter.Computer.Initialize();
     Yeet64.Interpreter.Computer.ClearMemory();
