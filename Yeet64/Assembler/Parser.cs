@@ -1,15 +1,16 @@
 using System.Data;
 using System.Diagnostics;
+using Yeet.Common.Assembler;
 
 namespace Yeet64.Assembler;
 
 public class Parser
 {
-    private readonly List<Lexer.Token> _tokens;
+    private readonly List<Token> _tokens;
 
     private int _index;
 
-    public Parser(ref List<Lexer.Token> tokens)
+    public Parser(ref List<Token> tokens)
     {
         _tokens = tokens;
         _index = 0;
@@ -21,7 +22,7 @@ public class Parser
 
         while (_index < _tokens.Count)
         {
-            var instruction = ExpectToken(Lexer.TokenType.Instruction);
+            var instruction = ExpectToken(TokenType.Instruction);
 
             byte instructionType;
             byte instructionNumber;
@@ -223,11 +224,11 @@ public class Parser
             {
                 case 1:
                 {
-                    var operand1 = ExpectToken(Lexer.TokenType.Register);
-                    var operand2 = ExpectToken(Lexer.TokenType.Register, Lexer.TokenType.Number);
+                    var operand1 = ExpectToken(TokenType.Register);
+                    var operand2 = ExpectToken(TokenType.Register, TokenType.Number);
                     var opcode = OpCode.CreateType1(
                         instructionNumber,
-                        operand2.Type is Lexer.TokenType.Register,
+                        operand2.Type is TokenType.Register,
                         uint.Parse(operand1.Text),
                         uint.Parse(operand2.Text)
                     );
@@ -237,10 +238,10 @@ public class Parser
                 }
                 case 2:
                 {
-                    var operand1 = ExpectToken(Lexer.TokenType.Register, Lexer.TokenType.Number);
+                    var operand1 = ExpectToken(TokenType.Register, TokenType.Number);
                     var opcode = OpCode.CreateType2(
                         instructionNumber,
-                        operand1.Type is Lexer.TokenType.Register,
+                        operand1.Type is TokenType.Register,
                         uint.Parse(operand1.Text)
                     );
 
@@ -249,7 +250,7 @@ public class Parser
                 }
                 case 3:
                 {
-                    var operand1 = ExpectToken(Lexer.TokenType.Register);
+                    var operand1 = ExpectToken(TokenType.Register);
                     var opcode = OpCode.CreateType3(
                         instructionNumber,
                         byte.Parse(operand1.Text)
@@ -274,7 +275,7 @@ public class Parser
         return code;
     }
 
-    private Lexer.Token ExpectToken(Lexer.TokenType type)
+    private Token ExpectToken(TokenType type)
     {
         if (_index >= _tokens.Count) throw new ArgumentOutOfRangeException(nameof(_index));
 
@@ -287,7 +288,7 @@ public class Parser
         return token;
     }
 
-    private Lexer.Token ExpectToken(Lexer.TokenType type1, Lexer.TokenType type2)
+    private Token ExpectToken(TokenType type1, TokenType type2)
     {
         if (_index >= _tokens.Count) throw new ArgumentOutOfRangeException(nameof(_index));
 

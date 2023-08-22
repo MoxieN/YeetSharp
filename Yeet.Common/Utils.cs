@@ -10,9 +10,7 @@ public static class Utils
     [DoesNotReturn]
     public static void AbortExecution(string message)
     {
-        Console.BackgroundColor = Color.Red;
-        Console.Write("EXECUTION HALTED:");
-        Console.BackgroundColor = Color.Empty;
+        Console.Write("EXECUTION HALTED:", Color.Red);
         Console.WriteLine(message);
         Environment.Exit(1);
     }
@@ -20,9 +18,7 @@ public static class Utils
     [DoesNotReturn]
     public static void AbortLoad(string message)
     {
-        Console.BackgroundColor = Color.Indigo;
-        Console.Write("LOAD HALTED");
-        Console.BackgroundColor = Color.Empty;
+        Console.Write("LOAD HALTED", Color.Red);
         Console.WriteLine($": {message}");
         Environment.Exit(1);
     }
@@ -31,7 +27,7 @@ public static class Utils
     {
         const string prefixError = "{0}ERR{1} ";
 
-        Formatter[] error =
+        var error = new Formatter[]
         {
             new("[", Color.IndianRed),
             new("]", Color.IndianRed)
@@ -45,7 +41,7 @@ public static class Utils
     {
         const string prefixInfo = "{0}INFO{1} ";
 
-        Formatter[] info =
+        var info = new Formatter[]
         {
             new("[", Color.RoyalBlue),
             new("]", Color.RoyalBlue)

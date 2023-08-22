@@ -1,5 +1,5 @@
 ﻿using Yeet.Common;
-using Console = System.Console;
+using Yeet64.Assembler;
 
 namespace YeetSharp;
 
@@ -116,7 +116,7 @@ public static class Program
         var lexer = new Yeet64.Assembler.Lexer("yeet64test.asm", false, false, false);
         var tokens = lexer.Run();
 
-        var parser = new Yeet64.Assembler.Parser(ref tokens);
+        var parser = new Parser(ref tokens);
         var code = parser.Run();
 
         Yeet64.Interpreter.Computer.Initialize();
