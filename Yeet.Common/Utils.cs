@@ -1,4 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Drawing;
+using Colorful;
+using Console = Colorful.Console;
 
 namespace Yeet.Common;
 
@@ -7,20 +10,48 @@ public static class Utils
     [DoesNotReturn]
     public static void AbortExecution(string message)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
-        Console.Write("EXECUTION HALTED");
-        Console.ForegroundColor = ConsoleColor.White;
-        Console.WriteLine($": {message}");
+        Console.BackgroundColor = Color.Red;
+        Console.Write("EXECUTION HALTED:");
+        Console.BackgroundColor = Color.Empty;
+        Console.WriteLine(message);
         Environment.Exit(1);
     }
-    
+
     [DoesNotReturn]
     public static void AbortLoad(string message)
     {
-        Console.ForegroundColor = ConsoleColor.Red;
+        Console.BackgroundColor = Color.Indigo;
         Console.Write("LOAD HALTED");
-        Console.ForegroundColor = ConsoleColor.White;
+        Console.BackgroundColor = Color.Empty;
         Console.WriteLine($": {message}");
         Environment.Exit(1);
+    }
+
+    public static void PrintError(string str)
+    {
+        const string prefixError = "{0}ERR{1} ";
+
+        Formatter[] error =
+        {
+            new("[", Color.IndianRed),
+            new("]", Color.IndianRed)
+        };
+
+        Console.WriteFormatted(prefixError, Color.White, error);
+        Console.WriteLine(str);
+    }
+
+    public static void PrintInfo(string str)
+    {
+        const string prefixInfo = "{0}INFO{1} ";
+
+        Formatter[] info =
+        {
+            new("[", Color.RoyalBlue),
+            new("]", Color.RoyalBlue)
+        };
+
+        Console.WriteFormatted(prefixInfo, Color.White, info);
+        Console.WriteLine(str);
     }
 }

@@ -44,7 +44,7 @@ public static class OpCode
 
         builder.Append(Convert.ToString(instruction, 2).PadLeft(5, '0'));
         builder.Append("000000000000000000000000000");
-        
+
         return Convert.ToUInt32(builder.ToString(), 2);
     }
 }

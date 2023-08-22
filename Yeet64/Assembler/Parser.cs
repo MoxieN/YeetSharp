@@ -199,7 +199,7 @@ public class Parser
                     instructionType = 2;
                     break;
                 }
-                
+
                 // Type 3 instructions
                 case "pop":
                 {
@@ -207,7 +207,7 @@ public class Parser
                     instructionType = 3;
                     break;
                 }
-                
+
                 // Type 4 instructions
                 case "ret":
                 {
@@ -215,7 +215,7 @@ public class Parser
                     instructionType = 4;
                     break;
                 }
-                
+
                 default: throw new SyntaxErrorException($"PARSER HALTED: Unknown instruction \"{instruction.Text}\"");
             }
 
@@ -294,7 +294,8 @@ public class Parser
         var token = _tokens[_index++];
         if (token.Type != type1 && token.Type != type2)
         {
-            throw new SyntaxErrorException($"PARSER EXCEPTION: Expected token type \"{type1}\" or \"{type2}\", found \"{token.Type}\"");
+            throw new SyntaxErrorException(
+                $"PARSER EXCEPTION: Expected token type \"{type1}\" or \"{type2}\", found \"{token.Type}\"");
         }
 
         return token;

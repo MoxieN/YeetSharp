@@ -9,7 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Yeet.Common\Yeet.Common.csproj" />
+        <ProjectReference Include="..\Yeet.Common\Yeet.Common.csproj"/>
     </ItemGroup>
 
 </Project>

@@ -1,4 +1,5 @@
 namespace Yeet64.Assembler;
+
 using System.Data;
 
 public class Lexer
@@ -22,7 +23,7 @@ public class Lexer
     private readonly string _text;
 
     private int _index;
-    
+
     public Lexer(string file, bool includeCommas = true, bool includeWhitespaces = true, bool includeComments = true)
     {
         if (!File.Exists(file)) throw new FileNotFoundException("LEXER HALTED: FileNotFound Exception");
@@ -34,7 +35,7 @@ public class Lexer
         _text = File.ReadAllText(file);
         _index = 0;
     }
-    
+
     ///<summary>Separate each word into tokens</summary>
     ///<returns>Returns file tokens</returns>
     ///<exception cref="FileNotFoundException">Could not find a file, make sure the path is correct.</exception>
@@ -82,9 +83,9 @@ public class Lexer
                     end++;
                     _index++;
                 }
-  
+
                 var substring = _text.Substring(start, end - start).ToLowerInvariant();
-    
+
                 // Check if substring is an instruction or a register
                 if (IsInstruction(substring))
                 {
@@ -110,19 +111,21 @@ public class Lexer
                     _index++;
                 }
 
-                if (IncludeComments) tokens.Add(new Token(TokenType.Comment, _text.Substring(start, end - start).TrimStart()));
+                if (IncludeComments)
+                    tokens.Add(new Token(TokenType.Comment, _text.Substring(start, end - start).TrimStart()));
             }
             else
             {
                 throw new SyntaxErrorException($"LEXER HALTED: Invalid character '{character}'");
             }
         }
-        
+
         return tokens;
     }
 
     private static bool IsInstruction(string text) => text
-        is "add" or "sub" or "mul" or "div" or "mod" or "and" or "or" or "xor" or "not" or "shl" or "shr" or "sal" or "sar"
+        is "add" or "sub" or "mul" or "div" or "mod" or "and" or "or" or "xor" or "not" or "shl" or "shr" or "sal"
+        or "sar"
         or "read" or "write" or "move" or "push" or "pop"
         or "in" or "out"
         or "ret" or "jump" or "call" or "cmp" or "jb" or "ja" or "je" or "jne" or "jbe" or "jae";

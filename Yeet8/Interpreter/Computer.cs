@@ -71,7 +71,9 @@ public static class Computer
         {
             Console.WriteLine(
                 $"INITIALIZATION HALTED: Power-On Self Test failed! Expected 0xDE in port 0, found 0x{value:X4}");
-            for (;;) { }
+            for (;;)
+            {
+            }
         }
 
         PoweredOn = true;

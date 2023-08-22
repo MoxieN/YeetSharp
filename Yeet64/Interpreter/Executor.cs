@@ -101,22 +101,54 @@ public static class Executor
     {
         switch (index)
         {
-            case 0: Computer.R0 = value; break;
-            case 1: Computer.R1 = value; break;
-            case 2: Computer.R2 = value; break;
-            case 3: Computer.R3 = value; break;
-            case 4: Computer.R4 = value; break;
-            case 5: Computer.R5 = value; break;
-            case 6: Computer.R6 = value; break;
-            case 7: Computer.R7 = value; break;
-            case 8: Computer.R8 = value; break;
-            case 9: Computer.R9 = value; break;
-            case 10: Computer.R10 = value; break;
-            case 11: Computer.R11 = value; break;
-            case 12: Computer.R12 = value; break;
-            case 13: Computer.R13 = value; break;
-            case 14: Computer.R14 = value; break;
-            case 15: Computer.R15 = value; break;
+            case 0:
+                Computer.R0 = value;
+                break;
+            case 1:
+                Computer.R1 = value;
+                break;
+            case 2:
+                Computer.R2 = value;
+                break;
+            case 3:
+                Computer.R3 = value;
+                break;
+            case 4:
+                Computer.R4 = value;
+                break;
+            case 5:
+                Computer.R5 = value;
+                break;
+            case 6:
+                Computer.R6 = value;
+                break;
+            case 7:
+                Computer.R7 = value;
+                break;
+            case 8:
+                Computer.R8 = value;
+                break;
+            case 9:
+                Computer.R9 = value;
+                break;
+            case 10:
+                Computer.R10 = value;
+                break;
+            case 11:
+                Computer.R11 = value;
+                break;
+            case 12:
+                Computer.R12 = value;
+                break;
+            case 13:
+                Computer.R13 = value;
+                break;
+            case 14:
+                Computer.R14 = value;
+                break;
+            case 15:
+                Computer.R15 = value;
+                break;
             default: throw new InvalidOperationException($"Trying to set invalid register: R{index}");
         }
     }
