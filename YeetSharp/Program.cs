@@ -42,8 +42,8 @@ public static class Program
         Console.WriteLine("YeetSharp was made with love by Sartox Software and MoxieN!");
 
         Console.WriteLine("Arguments:");
-        Console.WriteLine("-> -h     | Prints this page");
-        Console.WriteLine("-> -regs  | Prints the registers");
+        Console.WriteLine("-> -h      | Prints this page");
+        Console.WriteLine("-> -regs   | Prints the registers");
         Console.WriteLine("-> -aARCH* | Loads the correct CPU architecture, uses yeet64 by default (ex: -a8)");
         Console.WriteLine("'*' = (optional argument)");
     }
