@@ -5,7 +5,67 @@ public static class Executor
     public static void Execute()
     {
         if (!Computer.PoweredOn) return;
+
+        var uintArray = new byte[4];
+
+        Computer.R0 = Computer.StackSize;
+
+        while (Computer.R0 < Computer.MemorySize && Computer.PoweredOn)
+        {
+            uintArray[0] = Computer.MemoryRead8(Computer.R0++);
+            uintArray[1] = Computer.MemoryRead8(Computer.R0++);
+            uintArray[2] = Computer.MemoryRead8(Computer.R0++);
+            uintArray[3] = Computer.MemoryRead8(Computer.R0++);
+
+            var opcode = BitConverter.ToUInt32(uintArray);
+            var binary = Convert.ToString(opcode, 2).PadLeft(32, '0');
+
+            var instruction = Convert.ToByte(binary[..5], 2);
+
+            switch (instruction)
+            {
+                // Type 1 instructions
+                case Instruction.Add: break;
+                case Instruction.Sub: break;
+                case Instruction.Mul: break;
+                case Instruction.Div: break;
+                case Instruction.Mod: break;
+                case Instruction.And: break;
+                case Instruction.Or: break;
+                case Instruction.Xor: break;
+                case Instruction.Not: break;
+                case Instruction.Shl: break;
+                case Instruction.Shr: break;
+                case Instruction.Sal: break;
+                case Instruction.Sar: break;
+                case Instruction.Read: break;
+                case Instruction.Write: break;
+                case Instruction.Move: break;
+                case Instruction.In: break;
+                case Instruction.Out: break;
+                case Instruction.Cmp: break;
+
+                // Type 2 instructions
+                case Instruction.Push: break;
+                case Instruction.Jump: break;
+                case Instruction.Call: break;
+                case Instruction.Jb: break;
+                case Instruction.Ja: break;
+                case Instruction.Je: break;
+                case Instruction.Jne: break;
+                case Instruction.Jbe: break;
+                case Instruction.Jae: break;
+
+                // Type 3 instructions
+                case Instruction.Pop: break;
+
+                // Type 4 instructions
+                case Instruction.Ret: break;
+            }
+        }
     }
+
+    #region Helpers
 
     private static ulong GetRegister(byte index)
     {
@@ -54,5 +114,6 @@ public static class Executor
             default: throw new InvalidOperationException($"Trying to set invalid register: R{index}");
         }
     }
-    
+
+    #endregion
 }
