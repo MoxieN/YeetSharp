@@ -1,18 +1,32 @@
-﻿using Yeet8.Assembler;
-using Yeet8.Interpreter;
+﻿var showRegisters = args is ["-regs", ..];
 
-var asmInstructions = Lexer.LexInstructions("file.asm");
+#region Yeet64
+
+var tokens = Yeet64.Assembler.Lexer.LexInstructions("yeet64test.asm").Where(x => x.Type
+    is not Yeet64.Assembler.Lexer.TokenType.Comma
+    and not Yeet64.Assembler.Lexer.TokenType.Comment
+    and not Yeet64.Assembler.Lexer.TokenType.Whitespace
+).ToArray();
+var code = Yeet64.Assembler.Parser.ParseInstructions(tokens);
+
+#endregion
+
+/*#region Yeet8
+
+var asmInstructions = Yeet8.Assembler.Lexer.LexInstructions("yeet8test.asm");
 foreach (var i in asmInstructions)
     Console.WriteLine(i.ToString());
 
-Computer.Initialize();
-Computer.ClearMemory();
-Computer.ClearPorts();
+Yeet8.Interpreter.Computer.Initialize();
+Yeet8.Interpreter.Computer.ClearMemory();
+Yeet8.Interpreter.Computer.ClearPorts();
 
-var code = Parse.ParseInstructions(asmInstructions);
+var code = Yeet8.Assembler.Parse.ParseInstructions(asmInstructions);
 
-Computer.Load(code);
-Executor.Execute();
+Yeet8.Interpreter.Computer.Load(code);
+Yeet8.Interpreter.Executor.Execute();
 
 Console.WriteLine();
-Computer.PrintRegisters();
+if (showRegisters) Yeet8.Interpreter.Computer.PrintRegisters();
+
+#endregion*/

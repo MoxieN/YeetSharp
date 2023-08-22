@@ -1,4 +1,4 @@
-namespace Yeet.Common;
+namespace Yeet8;
 
 public static class Flag
 {
