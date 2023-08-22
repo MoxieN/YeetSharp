@@ -48,75 +48,85 @@ public class Lexer
         {
             var character = _text[_index];
 
-            if (character is ',')
+            switch (character)
             {
-                if (IncludeCommas) tokens.Add(new Token(TokenType.Comma, character.ToString()));
-                _index++;
-            }
-            else if (character is ' ' or '\r' or '\n' or '\t')
-            {
-                if (IncludeWhitespaces) tokens.Add(new Token(TokenType.Whitespace, character.ToString()));
-                _index++;
-            }
-            else if (char.IsDigit(character))
-            {
-                // Determine the start and end _index of the number
-                var start = _index;
-                var end = start;
-
-                while (_index < _text.Length && char.IsDigit(_text[_index]))
+                case ',':
                 {
-                    end++;
+                    if (IncludeCommas) tokens.Add(new Token(TokenType.Comma, character.ToString()));
                     _index++;
+                    break;
                 }
-
-                tokens.Add(new Token(TokenType.Number, _text.Substring(start, end - start)));
-            }
-            else if (char.IsLetter(character))
-            {
-                var start = _index;
-                var end = start;
-
-                char c;
-                while (_index < _text.Length && (char.IsLetter(c = _text[_index]) || char.IsDigit(c)))
+                case ' ' or '\r' or '\n' or '\t':
                 {
-                    end++;
+                    if (IncludeWhitespaces) tokens.Add(new Token(TokenType.Whitespace, character.ToString()));
                     _index++;
+                    break;
                 }
-
-                var substring = _text.Substring(start, end - start).ToLowerInvariant();
-
-                // Check if substring is an instruction or a register
-                if (IsInstruction(substring))
+                default:
                 {
-                    tokens.Add(new Token(TokenType.Instruction, substring));
-                }
-                else if (substring[0] is 'r' && byte.TryParse(substring = substring[1..], out var num) && num <= 15)
-                {
-                    tokens.Add(new Token(TokenType.Register, substring));
-                }
-                else
-                {
-                    throw new SyntaxErrorException($"LEXER HALTED: Invalid string \"{substring}\"");
-                }
-            }
-            else if (character == '#')
-            {
-                var start = ++_index;
-                var end = start;
+                    if (char.IsDigit(character))
+                    {
+                        // Determine the start and end _index of the number
+                        var start = _index;
+                        var end = start;
 
-                while (_index < _text.Length && _text[_index] is not '\r' and not '\n')
-                {
-                    end++;
-                    _index++;
-                }
+                        while (_index < _text.Length && char.IsDigit(_text[_index]))
+                        {
+                            end++;
+                            _index++;
+                        }
 
-                if (IncludeComments)
-                    tokens.Add(new Token(TokenType.Comment, _text.Substring(start, end - start).TrimStart()));
-            }
-            else
-            {
-                throw new SyntaxErrorException($"LEXER HALTED: Invalid character '{character}'");
+                        tokens.Add(new Token(TokenType.Number, _text.Substring(start, end - start)));
+                    }
+                    else if (char.IsLetter(character))
+                    {
+                        var start = _index;
+                        var end = start;
+
+                        char c;
+                        while (_index < _text.Length && (char.IsLetter(c = _text[_index]) || char.IsDigit(c)))
+                        {
+                            end++;
+                            _index++;
+                        }
+
+                        var substring = _text.Substring(start, end - start).ToLowerInvariant();
+
+                        // Check if substring is an instruction or a register
+                        if (IsInstruction(substring))
+                        {
+                            tokens.Add(new Token(TokenType.Instruction, substring));
+                        }
+                        else if (substring[0] is 'r' && byte.TryParse(substring = substring[1..], out var num) && num <= 15)
+                        {
+                            tokens.Add(new Token(TokenType.Register, substring));
+                        }
+                        else
+                        {
+                            throw new SyntaxErrorException($"LEXER HALTED: Invalid string \"{substring}\"");
+                        }
+                    }
+                    else if (character == '#')
+                    {
+                        var start = ++_index;
+                        var end = start;
+
+                        while (_index < _text.Length && _text[_index] is not '\r' and not '\n')
+                        {
+                            end++;
+                            _index++;
+                        }
+
+                        if (IncludeComments)
+                            tokens.Add(new Token(TokenType.Comment, _text.Substring(start, end - start).TrimStart()));
+                    }
+                    else
+                    {
+                        throw new SyntaxErrorException($"LEXER HALTED: Invalid character '{character}'");
+                    }
+
+                    break;
+                }
             }
         }
 
