@@ -40,7 +40,7 @@ public static class Executor
 
                     var result = add1 + add2;
                     if (result > byte.MaxValue)
-                        Utils.Abort($"Value reached max value: {result}");
+                        Utils.AbortExecution($"Value reached max value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -52,7 +52,7 @@ public static class Executor
 
                     var result = sub1 - sub2;
                     if (result < byte.MinValue)
-                        Utils.Abort($"Value reached min value: {result}");
+                        Utils.AbortExecution($"Value reached min value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -64,7 +64,7 @@ public static class Executor
 
                     var result = mul1 * mul2;
                     if (result > byte.MaxValue)
-                        Utils.Abort($"Value reached max value: {result}");
+                        Utils.AbortExecution($"Value reached max value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -76,7 +76,7 @@ public static class Executor
 
                     var result = div1 / div2;
                     if (result < byte.MinValue)
-                        Utils.Abort($"Value reached min value: {result}");
+                        Utils.AbortExecution($"Value reached min value: {result}");
 
                     SetRegister(op1, (byte)result);
                     break;
@@ -273,7 +273,7 @@ public static class Executor
     private static void Push(byte value)
     {
         if (Computer.R0 >= Computer.StackSize)
-            Utils.Abort($"SP ({Computer.R0}) >= Stack size ({Computer.StackSize})");
+            Utils.AbortExecution($"SP ({Computer.R0}) >= Stack size ({Computer.StackSize})");
 
         Computer.MemoryWrite(Computer.R0++, value);
     }
@@ -287,7 +287,7 @@ public static class Executor
             return;
         }
 
-        Utils.Abort($"SP ({Computer.R0}) == 0");
+        Utils.AbortExecution($"SP ({Computer.R0}) == 0");
     }
 
     private static void In(byte register, byte port)
@@ -346,7 +346,7 @@ public static class Executor
     {
         if (Computer.R0 == 0)
         {
-            Utils.Abort($"SP ({Computer.R0}) == 0");
+            Utils.AbortExecution($"SP ({Computer.R0}) == 0");
         }
 
         return Computer.MemoryRead(--Computer.R0);

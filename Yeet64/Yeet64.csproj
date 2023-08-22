@@ -1,5 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
-    
+
     <PropertyGroup>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
@@ -7,7 +7,7 @@
         <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
         <OutputPath>../bin</OutputPath>
     </PropertyGroup>
-    
+
     <ItemGroup>
         <ProjectReference Include="..\Yeet.Common\Yeet.Common.csproj" />
     </ItemGroup>

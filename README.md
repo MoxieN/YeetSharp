@@ -18,5 +18,5 @@
 - Yeet-8
 - Yeet-16 (not available)
 - Yeet-32 (not available)
-- Yeet-64 (not available)
+- Yeet-64 (in development)
 
