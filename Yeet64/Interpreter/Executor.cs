@@ -6,26 +6,32 @@ public static class Executor
     {
         if (!Computer.PoweredOn) return;
 
-        var uintArray = new byte[4];
-
         Computer.R0 = Computer.StackSize;
 
         while (Computer.R0 < Computer.MemorySize && Computer.PoweredOn)
         {
-            uintArray[0] = Computer.MemoryRead8(Computer.R0++);
-            uintArray[1] = Computer.MemoryRead8(Computer.R0++);
-            uintArray[2] = Computer.MemoryRead8(Computer.R0++);
-            uintArray[3] = Computer.MemoryRead8(Computer.R0++);
+            var opcode = (uint)
+            (
+                Computer.MemoryRead8(Computer.R0++)
+                | (Computer.MemoryRead8(Computer.R0++) << 8)
+                | (Computer.MemoryRead8(Computer.R0++) << 16)
+                | (Computer.MemoryRead8(Computer.R0++) << 24)
+            );
 
-            var opcode = BitConverter.ToUInt32(uintArray);
-            var binary = Convert.ToString(opcode, 2).PadLeft(32, '0');
-
-            var instruction = Convert.ToByte(binary[..5], 2);
+            var instruction = (opcode >> 27) & ((1U << 5) - 1);
 
             switch (instruction)
             {
                 // Type 1 instructions
-                case Instruction.Add: break;
+                case Instruction.Add:
+                {
+                    var isRegister = (opcode & (1U << 26)) != 0;
+                    var destination = (opcode >> 22) & ((1U << 4) - 1);
+                    var source = opcode & ((1U << 22) - 1);
+
+                    SetRegister(destination, GetRegister(destination) + (isRegister ? GetRegister(source) : source));
+                    break;
+                }
                 case Instruction.Sub: break;
                 case Instruction.Mul: break;
                 case Instruction.Div: break;
@@ -67,7 +73,7 @@ public static class Executor
 
     #region Helpers
 
-    private static ulong GetRegister(byte index)
+    private static ulong GetRegister(uint index)
     {
         return index switch
         {
@@ -91,7 +97,7 @@ public static class Executor
         };
     }
 
-    private static void SetRegister(byte index, ulong value)
+    private static void SetRegister(uint index, ulong value)
     {
         switch (index)
         {

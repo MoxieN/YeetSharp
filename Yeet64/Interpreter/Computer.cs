@@ -106,28 +106,29 @@ public static class Computer
 
     public static void MemoryWrite64(ulong address, ulong value)
     {
-        var bytes = BitConverter.GetBytes(value);
-        var length = (ulong)bytes.Length;
-
-        for (var i = 0UL; i < length; i++) Memory[address + i] = bytes[i];
+        Memory[address] = (byte)(value & 0xFF);
+        Memory[address + 1] = (byte)((value >> 8) & 0xFF);
+        Memory[address + 2] = (byte)((value >> 16) & 0xFF);
+        Memory[address + 3] = (byte)((value >> 24) & 0xFF);
+        Memory[address + 4] = (byte)((value >> 32) & 0xFF);
+        Memory[address + 5] = (byte)((value >> 40) & 0xFF);
+        Memory[address + 6] = (byte)((value >> 48) & 0xFF);
+        Memory[address + 7] = (byte)((value >> 56) & 0xFF);
     }
 
-    public static ulong MemoryRead64(ulong address) => BitConverter.ToUInt64(new[]
-    {
-        Memory[address],
-        Memory[address + 1],
-        Memory[address + 2],
-        Memory[address + 3],
-        Memory[address + 4],
-        Memory[address + 5],
-        Memory[address + 6],
-        Memory[address + 7]
-    });
+    public static ulong MemoryRead64(ulong address) => Memory[address]
+                                                       | ((ulong)Memory[address + 1] << 8)
+                                                       | ((ulong)Memory[address + 2] << 16)
+                                                       | ((ulong)Memory[address + 3] << 24)
+                                                       | ((ulong)Memory[address + 4] << 32)
+                                                       | ((ulong)Memory[address + 5] << 40)
+                                                       | ((ulong)Memory[address + 6] << 48)
+                                                       | ((ulong)Memory[address + 7] << 56);
 
     public static void PortWrite(byte port, ulong value)
     {
         Ports[port] = value;
-        PortEvents[port].Invoke();
+        PortEvents[port]();
     }
 
     public static ulong PortRead(byte port) => Ports[port];
