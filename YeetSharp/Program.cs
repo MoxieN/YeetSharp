@@ -6,40 +6,33 @@ namespace YeetSharp;
 public static class Program
 {
     // Arguments
-    private static string[] _arguments = Array.Empty<string>();
-
-    // Argument variables
-    private static int _arch = 64;
-    private static bool _showRegisters;
     private static bool _showHelp;
+    private static bool _showRegisters;
+    private static byte _arch = 64;
 
     /// <summary>
-    /// Program's entry point
+    /// Program entry point
     /// </summary>
-    /// <param name="args"></param>
-    static void Main(string[] args)
+    /// <param name="args">The command line arguments.</param>
+    public static void Main(string[] args)
     {
-        // Set argument variables
-        _showRegisters = args is ["-regs", ..];
-        _arguments = args;
-
-        HandleArgs();
+        HandleArgs(ref args);
         if (!_showHelp) StartCPU();
     }
 
     #region Func
 
     /// <summary>
-    /// Handle every known arguments if present.
+    /// Handle every known argument, if any.
     /// </summary>
-    private static void HandleArgs()
+    private static void HandleArgs(ref string[] args)
     {
-        if (_arguments.Contains("-h")) ShowHelp();
-        SetArchitecture();
+        if (args.Contains("-h")) ShowHelp();
+        SetArguments(ref args);
     }
 
     /// <summary>
-    /// 
+    /// Show all commands and their usage.
     /// </summary>
     private static void ShowHelp()
     {
@@ -56,7 +49,7 @@ public static class Program
     }
 
     /// <summary>
-    /// Calls the correct CPU depending on arguments
+    /// Calls the correct CPU emulation method depending on arguments
     /// </summary>
     /// <exception cref="NotImplementedException">This architecture isn't implemented, check README.md for further details.</exception>
     private static void StartCPU()
@@ -64,32 +57,45 @@ public static class Program
         switch (_arch)
         {
             case 64:
+            {
                 Yeet64CPU();
                 break;
+            }
             case 8:
+            {
                 Yeet8CPU();
                 break;
+            }
             default:
+            {
                 Utils.PrintError(
                     "This architecture isn't implemented, please refer to the help section using the argument '-h'.");
                 break;
+            }
         }
     }
 
-    private static void SetArchitecture()
+    private static void SetArguments(ref string[] args)
     {
         var archPresent = false;
 
-        foreach (var arg in _arguments)
+        foreach (var arg in args)
         {
+            if (arg == "-regs")
+            {
+                _showRegisters = true;
+                continue;
+            }
+
             if (!arg.StartsWith("-a")) continue;
-            if (archPresent)
-                Utils.PrintError(
-                    "You can't use more than one architecture, please refer to the help section using the argument '-h'.");
+            if (archPresent) Utils.PrintError(
+                "You can't use more than one architecture, please refer to the help section using the argument '-h'.");
+
             archPresent = true;
+
             try
             {
-                _arch = Convert.ToInt32(arg[2..]);
+                _arch = Convert.ToByte(arg[2..]);
             }
             catch (FormatException)
             {
@@ -101,7 +107,7 @@ public static class Program
 
     #endregion
 
-    #region CPUInstructions
+    #region CPU Architectures
 
     private static void Yeet64CPU()
     {
