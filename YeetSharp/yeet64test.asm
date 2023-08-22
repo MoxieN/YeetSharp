@@ -1,8 +1,11 @@
-# Calculates number ('A' in ASCII)
-move r1, 35
-add r1, 30
-move r2, r1
+# Computes number
+move r3, 35
+add r3, 30
 
-# Pushes character to stack, then pops it to another register
-push r2
-pop r3
+# Pushes number to stack, then pops it to another register
+push r3
+pop r4
+
+# Tells the emulator to shut down via a system call
+move r5, 1
+out r5, 0

@@ -1,6 +1,6 @@
 namespace Yeet64;
 
-public class Instruction
+public static class Instruction
 {
     public const byte
         Add = 0b00000,

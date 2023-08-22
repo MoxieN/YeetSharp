@@ -1,3 +1,4 @@
+using System.Text;
 using Yeet.Common;
 
 namespace Yeet64.Interpreter;
@@ -12,12 +13,12 @@ public static class Computer
     private static readonly ulong[] Ports = new ulong[2];
     private static readonly Action[] PortEvents = new Action[2];
 
-    public static bool PoweredOn;
+    public static bool PoweredOn { get; private set; }
 
     public static ulong
-        R0,
-        R1,
-        R2,
+        R0, // Instruction Pointer (IP)
+        R1, // Stack Pointer (SP)
+        R2, // Flags Register (FR)
         R3,
         R4,
         R5,
@@ -32,15 +33,11 @@ public static class Computer
         R14,
         R15;
 
-    /// <summary>
-    /// Initialize virtual CPU
-    /// </summary>
     public static void Initialize()
     {
-        // Registers initialization
-        R0 = 0; // IP
-        R1 = 0; // SP
-        R2 = 0; // FR
+        R0 = 0;
+        R1 = 0;
+        R2 = 0;
         R3 = 0;
         R4 = 0;
         R5 = 0;
@@ -55,57 +52,46 @@ public static class Computer
         R14 = 0;
         R15 = 0;
 
-        // Port events initialization
         PortEvents[0] = () => { }; // Does nothing (test port)
-        PortEvents[1] = () => { }; // TODO: System call port
+        PortEvents[1] = () => { PerformSystemCall(Ports[1]); }; // System call port
 
         PoweredOn = true;
     }
 
-    /// <summary>
-    /// Print current registers.
-    /// </summary>
-    public static void PrintRegisters()
+    public static string PrintRegisters()
     {
-        Console.WriteLine("Registers:");
-        Console.WriteLine($"- R0: {R0}");
-        Console.WriteLine($"- R1: {R1}");
-        Console.WriteLine($"- R2: {R2}");
-        Console.WriteLine($"- R3: {R3}");
-        Console.WriteLine($"- R4: {R4}");
-        Console.WriteLine($"- R5: {R5}");
-        Console.WriteLine($"- R6: {R6}");
-        Console.WriteLine($"- R7: {R7}");
-        Console.WriteLine($"- R8: {R8}");
-        Console.WriteLine($"- R9: {R9}");
-        Console.WriteLine($"- R10: {R10}");
-        Console.WriteLine($"- R11: {R11}");
-        Console.WriteLine($"- R12: {R12}");
-        Console.WriteLine($"- R13: {R13}");
-        Console.WriteLine($"- R14: {R14}");
-        Console.WriteLine($"- R15: {R15}");
+        var sb = new StringBuilder();
+
+        sb.Append("R0: "); sb.Append(R0); sb.AppendLine();
+        sb.Append("R1: "); sb.Append(R1); sb.AppendLine();
+        sb.Append("R2: "); sb.Append(R2); sb.AppendLine();
+        sb.Append("R3: "); sb.Append(R3); sb.AppendLine();
+        sb.Append("R4: "); sb.Append(R4); sb.AppendLine();
+        sb.Append("R5: "); sb.Append(R5); sb.AppendLine();
+        sb.Append("R6: "); sb.Append(R6); sb.AppendLine();
+        sb.Append("R7: "); sb.Append(R7); sb.AppendLine();
+        sb.Append("R8: "); sb.Append(R8); sb.AppendLine();
+        sb.Append("R9: "); sb.Append(R9); sb.AppendLine();
+        sb.Append("R10: "); sb.Append(R10); sb.AppendLine();
+        sb.Append("R11: "); sb.Append(R11); sb.AppendLine();
+        sb.Append("R12: "); sb.Append(R12); sb.AppendLine();
+        sb.Append("R13: "); sb.Append(R13); sb.AppendLine();
+        sb.Append("R14: "); sb.Append(R14); sb.AppendLine();
+        sb.Append("R15: "); sb.Append(R15); sb.AppendLine();
+
+        return sb.ToString();
     }
 
-    /// <summary>
-    /// Clear memory.
-    /// </summary>
     public static void ClearMemory()
     {
         for (var i = 0; i < Memory.Length; i++) Memory[i] = 0;
     }
 
-    /// <summary>
-    /// Clear ports.
-    /// </summary>
     public static void ClearPorts()
     {
         for (var i = 0; i < Ports.Length; i++) Ports[i] = 0;
     }
 
-    /// <summary>
-    /// Load instructions to the virtual CPU.
-    /// </summary>
-    /// <param name="code">Instructions to load</param>
     public static void Load(byte[] code)
     {
         var codeSize = (ulong)code.Length;
@@ -118,12 +104,7 @@ public static class Computer
         for (var i = 0UL; i < codeSize; i++) Memory[StackSize + i] = code[i];
     }
 
-    /// <summary>
-    /// Write value to memory address.
-    /// </summary>
-    /// <param name="address">Memory address to use.</param>
-    /// <param name="value">Value to write to the address.</param>
-    public static void MemoryWrite(ulong address, ulong value)
+    public static void MemoryWrite64(ulong address, ulong value)
     {
         var bytes = BitConverter.GetBytes(value);
         var length = (ulong)bytes.Length;
@@ -131,44 +112,54 @@ public static class Computer
         for (var i = 0UL; i < length; i++) Memory[address + i] = bytes[i];
     }
 
-    /// <summary>
-    /// Read value from memory address
-    /// </summary>
-    /// <param name="address">Memory address to lookup.</param>
-    /// <returns>Value of address.</returns>
-    public static ulong MemoryRead(ulong address)
+    public static ulong MemoryRead64(ulong address) => BitConverter.ToUInt64(new[]
     {
-        return BitConverter.ToUInt64(new[]
-        {
-            Memory[address],
-            Memory[address + 1],
-            Memory[address + 2],
-            Memory[address + 3],
-            Memory[address + 4],
-            Memory[address + 5],
-            Memory[address + 6],
-            Memory[address + 7]
-        });
-    }
+        Memory[address],
+        Memory[address + 1],
+        Memory[address + 2],
+        Memory[address + 3],
+        Memory[address + 4],
+        Memory[address + 5],
+        Memory[address + 6],
+        Memory[address + 7]
+    });
 
-    /// <summary>
-    /// Write to I/O port.
-    /// </summary>
-    /// <param name="port">Port to use.</param>
-    /// <param name="value">Value to send to I/O port.</param>
     public static void PortWrite(byte port, ulong value)
     {
         Ports[port] = value;
         PortEvents[port].Invoke();
     }
 
-    /// <summary>
-    /// Read from I/O port.
-    /// </summary>
-    /// <param name="port">I/O port to lookup.</param>
-    /// <returns>Value of I/O port</returns>
-    public static ulong PortRead(byte port)
+    public static ulong PortRead(byte port) => Ports[port];
+
+    #region Helpers
+
+    private static void PerformSystemCall(ulong syscall)
     {
-        return Ports[port];
+        R2 &= ~Flag.UnknownSyscall;
+
+        switch (syscall)
+        {
+            case 0: // Emulator shut down
+            {
+                PoweredOn = false;
+                break;
+            }
+            default:
+            {
+                R2 |= Flag.UnknownSyscall;
+                break;
+            }
+        }
     }
+
+    #endregion
+
+    #region Memory operations for internal use, not exposed by any instructions
+
+    internal static void MemoryWrite8(ulong address, byte value) => Memory[address] = value;
+
+    internal static byte MemoryRead8(ulong address) => Memory[address];
+
+    #endregion
 }

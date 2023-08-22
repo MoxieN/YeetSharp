@@ -1,26 +1,30 @@
 using System.Data;
-using System.Threading.Channels;
+using System.Diagnostics;
 
 namespace Yeet64.Assembler;
 
 public class Parser
 {
-    private static Lexer.Token[] _tokens;
-    private static int _index;
-    
-    public static List<byte> ParseInstructions(Lexer.Token[] tokens)
+    private readonly List<Lexer.Token> _tokens;
+
+    private int _index;
+
+    public Parser(ref List<Lexer.Token> tokens)
     {
-        var code = new List<byte>();
-        
         _tokens = tokens;
         _index = 0;
+    }
 
-        while (_index < tokens.Length)
+    public List<byte> Run()
+    {
+        var code = new List<byte>();
+
+        while (_index < _tokens.Count)
         {
             var instruction = ExpectToken(Lexer.TokenType.Instruction);
 
-            byte instructionType = 0;
-            byte instructionNumber = 0;
+            byte instructionType;
+            byte instructionNumber;
 
             switch (instruction.Text)
             {
@@ -211,11 +215,13 @@ public class Parser
                     instructionType = 4;
                     break;
                 }
+                
+                default: throw new SyntaxErrorException($"PARSER HALTED: Unknown instruction \"{instruction.Text}\"");
             }
 
             switch (instructionType)
             {
-                case 0:
+                case 1:
                 {
                     var operand1 = ExpectToken(Lexer.TokenType.Register);
                     var operand2 = ExpectToken(Lexer.TokenType.Register, Lexer.TokenType.Number);
@@ -229,7 +235,7 @@ public class Parser
                     code.AddRange(BitConverter.GetBytes(opcode));
                     break;
                 }
-                case 1:
+                case 2:
                 {
                     var operand1 = ExpectToken(Lexer.TokenType.Register, Lexer.TokenType.Number);
                     var opcode = OpCode.CreateType2(
@@ -241,7 +247,7 @@ public class Parser
                     code.AddRange(BitConverter.GetBytes(opcode));
                     break;
                 }
-                case 2:
+                case 3:
                 {
                     var operand1 = ExpectToken(Lexer.TokenType.Register);
                     var opcode = OpCode.CreateType3(
@@ -252,7 +258,7 @@ public class Parser
                     code.AddRange(BitConverter.GetBytes(opcode));
                     break;
                 }
-                case 3:
+                case 4:
                 {
                     var opcode = OpCode.CreateType4(
                         instructionNumber
@@ -261,28 +267,29 @@ public class Parser
                     code.AddRange(BitConverter.GetBytes(opcode));
                     break;
                 }
+                default: throw new UnreachableException();
             }
         }
 
         return code;
     }
 
-    private static Lexer.Token ExpectToken(Lexer.TokenType type)
+    private Lexer.Token ExpectToken(Lexer.TokenType type)
     {
-        if (_index >= _tokens.Length) throw new ArgumentOutOfRangeException(nameof(_index));
+        if (_index >= _tokens.Count) throw new ArgumentOutOfRangeException(nameof(_index));
 
         var token = _tokens[_index++];
         if (token.Type != type)
         {
             throw new SyntaxErrorException($"PARSER EXCEPTION: Expected token type \"{type}\", found \"{token.Type}\"");
         }
-        
+
         return token;
     }
 
-    private static Lexer.Token ExpectToken(Lexer.TokenType type1, Lexer.TokenType type2)
+    private Lexer.Token ExpectToken(Lexer.TokenType type1, Lexer.TokenType type2)
     {
-        if (_index >= _tokens.Length) throw new ArgumentOutOfRangeException(nameof(_index));
+        if (_index >= _tokens.Count) throw new ArgumentOutOfRangeException(nameof(_index));
 
         var token = _tokens[_index++];
         if (token.Type != type1 && token.Type != type2)
