@@ -1,21 +1,20 @@
+using Yeet.Common;
+
 namespace Yeet64.Interpreter;
 
 public static class Computer
 {
-    public const byte StackSize = byte.MaxValue;
+    public const ulong StackSize = 4 * 1024; // 4 KiB
+    public const ulong MemorySize = 16 * 1024 * 1024; // 16 MiB
+    public const ulong MaxCodeSize = MemorySize - StackSize;
 
-    public const short UserMemory = 32513;
-    public const short MaxCodeSize = short.MaxValue;
-
-    public const ushort MemorySize = ushort.MaxValue;
-
-    private static readonly byte[] Memory = new byte[MemorySize + 1]; // ~64 KB of RAM
-    private static readonly byte[] Ports = new byte[4];
-    private static readonly Action[] PortEvents = new Action[4];
+    private static readonly byte[] Memory = new byte[MemorySize];
+    private static readonly ulong[] Ports = new ulong[2];
+    private static readonly Action[] PortEvents = new Action[2];
 
     public static bool PoweredOn;
 
-    public static byte
+    public static ulong
         R0,
         R1,
         R2,
@@ -57,22 +56,8 @@ public static class Computer
         R15 = 0;
 
         // Port events initialization
-        PortEvents[0] = () => Ports[0] = 0xDE; // Reserved port for testing (like a simulated POST)
-        PortEvents[1] = () => { }; // Does nothing (test port)
-        PortEvents[2] = () => PoweredOn = false; // Tells the processor to shut down
-        PortEvents[3] = () => Console.Write((char)Ports[3]); // Prints an ASCII character to the screen
-
-        // Self test
-        PortEvents[0].Invoke();
-
-        var value = Ports[0];
-
-        if (value != 0xDE)
-        {
-            Console.WriteLine(
-                $"INITIALIZATION HALTED: Power-On Self Test failed! Expected 0xDE in port 0, found 0x{value:X4}");
-            for (;;) { }
-        }
+        PortEvents[0] = () => { }; // Does nothing (test port)
+        PortEvents[1] = () => { }; // TODO: System call port
 
         PoweredOn = true;
     }
@@ -106,8 +91,7 @@ public static class Computer
     /// </summary>
     public static void ClearMemory()
     {
-        for (var i = 0; i < Memory.Length; i++)
-            Memory[i] = 0;
+        for (var i = 0; i < Memory.Length; i++) Memory[i] = 0;
     }
 
     /// <summary>
@@ -115,8 +99,7 @@ public static class Computer
     /// </summary>
     public static void ClearPorts()
     {
-        for (var i = 0; i < Ports.Length; i++)
-            Ports[i] = 0;
+        for (var i = 0; i < Ports.Length; i++) Ports[i] = 0;
     }
 
     /// <summary>
@@ -125,16 +108,14 @@ public static class Computer
     /// <param name="code">Instructions to load</param>
     public static void Load(byte[] code)
     {
-        if (code.Length > MaxCodeSize)
+        var codeSize = (ulong)code.Length;
+
+        if (codeSize > MaxCodeSize)
         {
-            Console.WriteLine($"LOAD HALTED: Code size ({code.Length}) > Max code size ({MaxCodeSize})");
-            for (;;)
-            {
-            }
+            Utils.AbortLoad($"Code size ({codeSize}) > Max code size ({MaxCodeSize})");
         }
 
-        for (var i = 0; i < code.Length; i++)
-            Memory[UserMemory + StackSize + i] = code[i];
+        for (var i = 0UL; i < codeSize; i++) Memory[StackSize + i] = code[i];
     }
 
     /// <summary>
@@ -142,9 +123,12 @@ public static class Computer
     /// </summary>
     /// <param name="address">Memory address to use.</param>
     /// <param name="value">Value to write to the address.</param>
-    public static void MemoryWrite(ushort address, byte value)
+    public static void MemoryWrite(ulong address, ulong value)
     {
-        Memory[address] = value;
+        var bytes = BitConverter.GetBytes(value);
+        var length = (ulong)bytes.Length;
+
+        for (var i = 0UL; i < length; i++) Memory[address + i] = bytes[i];
     }
 
     /// <summary>
@@ -152,9 +136,19 @@ public static class Computer
     /// </summary>
     /// <param name="address">Memory address to lookup.</param>
     /// <returns>Value of address.</returns>
-    public static byte MemoryRead(ushort address)
+    public static ulong MemoryRead(ulong address)
     {
-        return Memory[address];
+        return BitConverter.ToUInt64(new[]
+        {
+            Memory[address],
+            Memory[address + 1],
+            Memory[address + 2],
+            Memory[address + 3],
+            Memory[address + 4],
+            Memory[address + 5],
+            Memory[address + 6],
+            Memory[address + 7]
+        });
     }
 
     /// <summary>
@@ -162,7 +156,7 @@ public static class Computer
     /// </summary>
     /// <param name="port">Port to use.</param>
     /// <param name="value">Value to send to I/O port.</param>
-    public static void PortWrite(byte port, byte value)
+    public static void PortWrite(byte port, ulong value)
     {
         Ports[port] = value;
         PortEvents[port].Invoke();
@@ -173,7 +167,7 @@ public static class Computer
     /// </summary>
     /// <param name="port">I/O port to lookup.</param>
     /// <returns>Value of I/O port</returns>
-    public static byte PortRead(byte port)
+    public static ulong PortRead(byte port)
     {
         return Ports[port];
     }

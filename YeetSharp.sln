@@ -9,7 +9,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet8", "Yeet8\Yeet8.csproj
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet.Common", "Yeet.Common\Yeet.Common.csproj", "{01378EF9-E5E9-4462-B115-92569C68AC08}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet64", "Yeet64\Yeet64.csproj", "{C2C7AA79-B99C-41B4-B6FE-D1E086B386A7}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet64", "Yeet64\Yeet64.csproj", "{5A60EDDC-D40C-4E4F-8F41-09C062F52876}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -32,9 +32,9 @@ Global
 		{01378EF9-E5E9-4462-B115-92569C68AC08}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{01378EF9-E5E9-4462-B115-92569C68AC08}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{01378EF9-E5E9-4462-B115-92569C68AC08}.Release|Any CPU.Build.0 = Release|Any CPU
-		{C2C7AA79-B99C-41B4-B6FE-D1E086B386A7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{C2C7AA79-B99C-41B4-B6FE-D1E086B386A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{C2C7AA79-B99C-41B4-B6FE-D1E086B386A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{C2C7AA79-B99C-41B4-B6FE-D1E086B386A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5A60EDDC-D40C-4E4F-8F41-09C062F52876}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5A60EDDC-D40C-4E4F-8F41-09C062F52876}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5A60EDDC-D40C-4E4F-8F41-09C062F52876}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5A60EDDC-D40C-4E4F-8F41-09C062F52876}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

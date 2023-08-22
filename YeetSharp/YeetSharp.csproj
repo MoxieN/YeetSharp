@@ -1,12 +1,12 @@
 <Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
-        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
-        <OutputPath>../bin</OutputPath>
         <OutputType>Exe</OutputType>
         <TargetFramework>net7.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
+        <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+        <OutputPath>../bin</OutputPath>
     </PropertyGroup>
 
     <ItemGroup>
@@ -14,13 +14,13 @@
             <CopyToOutputDirectory>Always</CopyToOutputDirectory>
         </None>
         <None Update="yeet64test.asm">
-          <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+            <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>
 
     <ItemGroup>
-        <ProjectReference Include="..\Yeet8\Yeet8.csproj" />
         <ProjectReference Include="..\Yeet64\Yeet64.csproj" />
+        <ProjectReference Include="..\Yeet8\Yeet8.csproj" />
     </ItemGroup>
 
 </Project>
