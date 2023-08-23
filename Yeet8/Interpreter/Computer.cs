@@ -1,3 +1,5 @@
+using Yeet.Common;
+
 namespace Yeet8.Interpreter;
 
 public static class Computer
@@ -84,7 +86,6 @@ public static class Computer
     /// </summary>
     public static void PrintRegisters()
     {
-        Console.WriteLine("Registers:");
         Console.WriteLine($"- R0: {R0}");
         Console.WriteLine($"- R1: {R1}");
         Console.WriteLine($"- R2: {R2}");

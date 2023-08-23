@@ -126,7 +126,11 @@ public static class Program
 
         Utils.PrintInfo("CPU Emulation ended");
 
-        if (_showRegisters) Console.WriteLine(Yeet64.Interpreter.Computer.PrintRegisters());
+        if (_showRegisters)
+        {
+            Utils.PrintInfo("Dumping CPU registers...");
+            Console.WriteLine(Yeet64.Interpreter.Computer.PrintRegisters());
+        }
     }
 
     private static void Yeet8CPU()
@@ -147,7 +151,11 @@ public static class Program
 
         Utils.PrintInfo("CPU Emulation ended");
 
-        if (_showRegisters) Yeet8.Interpreter.Computer.PrintRegisters();
+        if (_showRegisters)
+        {
+            Utils.PrintInfo("DumpingCPU registers...");
+            Yeet8.Interpreter.Computer.PrintRegisters();
+        }
     }
 
     #endregion

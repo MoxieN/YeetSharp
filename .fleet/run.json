@@ -1,0 +1,28 @@
+{
+    "configurations": [
+        {
+            "name": "Run 'YeetSharp' with DEBUG features",
+            "type": "dotnet",
+            "workingDir": "bin/",
+            "solutionPath": "$PROJECT_DIR$/YeetSharp.sln",
+            "projectPath": "$PROJECT_DIR$/YeetSharp/YeetSharp.csproj",
+            "args": ["-regs"],
+        },
+        {
+            "name": "Run 'YeetSharp' Yeet8",
+            "type": "dotnet",
+            "workingDir": "bin/",
+            "solutionPath": "$PROJECT_DIR$/YeetSharp.sln",
+            "projectPath": "$PROJECT_DIR$/YeetSharp/YeetSharp.csproj",
+            "args": ["-a8"],
+        },
+        {
+            "name": "Run 'YeetSharp' Yeet8 with DEBUG features",
+            "type": "dotnet",
+            "workingDir": "bin/",
+            "solutionPath": "$PROJECT_DIR$/YeetSharp.sln",
+            "projectPath": "$PROJECT_DIR$/YeetSharp/YeetSharp.csproj",
+            "args": ["-regs", "-a8"],
+        },
+    ]
+}

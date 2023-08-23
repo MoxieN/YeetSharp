@@ -85,9 +85,15 @@ public abstract class Lexer
                         {
                             tokens.Add(new Token(TokenType.Opcode, substring));
                         }
+                        // Check if the string is a register
                         else if (substring[0] is 'r' && byte.TryParse(substring = substring[1..], out var num) && num <= 15)
                         {
                             tokens.Add(new Token(TokenType.Register, substring));
+                        }
+                        // Checks if the string is a label
+                        else if (_index < _text.Length && _text[_index++] == ':')
+                        {
+                            tokens.Add(new Token(TokenType.Label, substring));
                         }
                         else
                         {

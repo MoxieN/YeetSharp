@@ -25,27 +25,97 @@ public static class Executor
                 // Type 1 instructions
                 case OpCode.Add:
                 {
+                    var isRegister = (instruction & (1U << 26)) != 0; // Gets the 26th bit (starting from the right)
+                    var destination = (instruction >> 22) & ((1U << 4) - 1); // Gets 4 bits starting from the 22th
+                    var source = instruction & ((1U << 22) - 1); // Gets 22 bits starting from the first
+
+                    // Gets register value if source is register, else uses source value directly to set the destination register's value
+                    SetRegister(destination, GetRegister(destination) + (isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
+                case OpCode.Sub:
+                {
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) + (isRegister ? GetRegister(source) : source));
+                    SetRegister(destination, GetRegister(destination) - (isRegister ? GetRegister(source) : source));
                     break;
                 }
-                case OpCode.Sub: break;
-                case OpCode.Mul: break;
-                case OpCode.Div: break;
-                case OpCode.Mod: break;
-                case OpCode.And: break;
-                case OpCode.Or: break;
-                case OpCode.Xor: break;
-                case OpCode.Not: break;
-                case OpCode.Shl: break;
-                case OpCode.Shr: break;
-                case OpCode.Sal: break;
-                case OpCode.Sar: break;
-                case OpCode.Read: break;
-                case OpCode.Write: break;
+
+                case OpCode.Mul:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+
+                    SetRegister(destination, GetRegister(destination) * (isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
+                case OpCode.Div:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+
+                    SetRegister(destination, GetRegister(destination) / (isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
+                case OpCode.Mod:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+
+                    SetRegister(destination, GetRegister(destination) % (isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
+                case OpCode.And:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+
+                    SetRegister(destination, GetRegister(destination) & (isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
+                case OpCode.Or:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+
+                    SetRegister(destination, GetRegister(destination) | (isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
+                case OpCode.Xor:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+
+                    SetRegister(destination, GetRegister(destination) ^ (isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
+                case OpCode.Shl: throw new NotImplementedException();
+
+                case OpCode.Shr: throw new NotImplementedException();
+
+                case OpCode.Sal: throw new NotImplementedException();
+
+                case OpCode.Sar: throw new NotImplementedException();
+
+                case OpCode.Read: throw new NotImplementedException();
+
+                case OpCode.Write: throw new NotImplementedException();
+
                 case OpCode.Move:
                 {
                     var isRegister = (instruction & (1U << 26)) != 0;
@@ -55,7 +125,17 @@ public static class Executor
                     SetRegister(destination, isRegister ? GetRegister(source) : source);
                     break;
                 }
-                case OpCode.In: break;
+
+                case OpCode.In:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+
+                    SetRegister(destination, Computer.PortRead(isRegister ? GetRegister(source) : source));
+                    break;
+                }
+
                 case OpCode.Out:
                 {
                     var isRegister = (instruction & (1U << 26)) != 0;
@@ -65,7 +145,24 @@ public static class Executor
                     Computer.PortWrite(GetRegister(destination), isRegister ? GetRegister(source) : source);
                     break;
                 }
-                case OpCode.Cmp: break;
+
+                case OpCode.Cmp:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var operand1 = (instruction >> 22) & ((1U << 4) - 1);
+                    var operand2 = instruction & ((1U << 22) - 1);
+
+                    var source1 = GetRegister(operand1);
+                    var source2 = isRegister ? GetRegister(operand2) : operand2;
+
+                    if (source1 < source2) Computer.R2 |= Flag.Below;
+                    if (source1 > source2) Computer.R2 |= Flag.Above;
+                    if (source1 <= source2) Computer.R2 |= Flag.BelowOrEqual;
+                    if (source1 >= source2) Computer.R2 |= Flag.AboveOrEqual;
+                    if (source1 == source2) Computer.R2 |= Flag.Equal;
+                    if (source1 != source2) Computer.R2 |= Flag.NotEqual;
+                    break;
+                }
 
                 // Type 2 instructions
                 case OpCode.Push:
@@ -77,14 +174,82 @@ public static class Executor
                     Computer.R1 += sizeof(ulong);
                     break;
                 }
-                case OpCode.Jump: break;
-                case OpCode.Call: break;
-                case OpCode.Jb: break;
-                case OpCode.Ja: break;
-                case OpCode.Je: break;
-                case OpCode.Jne: break;
-                case OpCode.Jbe: break;
-                case OpCode.Jae: break;
+
+                case OpCode.Jump:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
+
+                case OpCode.Call:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    // Push R0 to the stack for it to be retrieved later by ret
+                    Computer.MemoryWrite64(Computer.R1, Computer.R0);
+                    Computer.R1 += sizeof(ulong);
+
+                    Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
+
+                case OpCode.Jb:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    if ((Computer.R2 & Flag.Below) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
+
+                case OpCode.Ja:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    if ((Computer.R2 & Flag.Above) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
+
+                case OpCode.Je:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    if ((Computer.R2 & Flag.Equal) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
+
+                case OpCode.Jne:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    if ((Computer.R2 & Flag.NotEqual) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
+
+                case OpCode.Jbe:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    if ((Computer.R2 & Flag.BelowOrEqual) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
+
+                case OpCode.Jae:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
+
+                    if ((Computer.R2 & Flag.AboveOrEqual) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    break;
+                }
 
                 // Type 3 instructions
                 case OpCode.Pop:
@@ -96,8 +261,22 @@ public static class Executor
                     break;
                 }
 
+                case OpCode.Not:
+                {
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+
+                    SetRegister(destination, ~GetRegister(destination));
+                    break;
+                }
+
                 // Type 4 instructions
-                case OpCode.Ret: break;
+                case OpCode.Ret:
+                {
+                    // Get address value by popping R0 from stack (set earlier by call)
+                    Computer.R1 -= 8;
+                    Computer.R0 = Computer.MemoryRead64(Computer.R1);
+                    break;
+                }
             }
         }
     }

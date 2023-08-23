@@ -1,7 +1,9 @@
 # Computes number
 move r3, 35
 add r3, 30
+jump label
 
+label:
 # Pushes number to stack, then pops it to another register
 push r3
 pop r4

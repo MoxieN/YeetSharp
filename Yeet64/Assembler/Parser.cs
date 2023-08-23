@@ -8,11 +8,18 @@ public class Parser
 {
     private readonly List<Token> _tokens;
 
+    private ulong _instructionAddress;
+    private ulong _labelAddress;
+    private bool _onLabel;
+
     private int _index;
 
     public Parser(ref List<Token> tokens)
     {
         _tokens = tokens;
+        _instructionAddress = 0;
+        _labelAddress = 0;
+        _onLabel = false;
         _index = 0;
     }
 
@@ -22,10 +29,22 @@ public class Parser
 
         while (_index < _tokens.Count)
         {
-            var opcode = ExpectToken(TokenType.Opcode);
+            var token = ExpectToken(TokenType.Opcode, TokenType.Label);
+
+            /*if (token.Type == TokenType.Label)
+            {
+                if(!_onLabel)
+                {
+                    _onLabel = true;
+                    _labelAddress = _instructionAddress;
+                }
+                continue;
+            }*/
+
+            _instructionAddress += 4;
 
             byte opcodeType, opcodeNumber;
-            switch (opcode.Text)
+            switch (token.Text)
             {
                 // Type 1 instructions
                 case "add":
