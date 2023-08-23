@@ -157,13 +157,13 @@ public static class Computer
                                                        | ((ulong)Memory[address + 6] << 48)
                                                        | ((ulong)Memory[address + 7] << 56);
 
-    public static void PortWrite(byte port, ulong value)
+    public static void PortWrite(ulong port, ulong value)
     {
         Ports[port] = value;
         PortEvents[port]();
     }
 
-    public static ulong PortRead(byte port) => Ports[port];
+    public static ulong PortRead(ulong port) => Ports[port];
 
     #region Helpers
 
@@ -175,6 +175,7 @@ public static class Computer
         {
             case 0: // Emulator shut down
             {
+                Utils.PrintInfo("Received shut down signal from program");
                 PoweredOn = false;
                 break;
             }

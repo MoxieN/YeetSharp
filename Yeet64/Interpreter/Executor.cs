@@ -46,13 +46,37 @@ public static class Executor
                 case Instruction.Sar: break;
                 case Instruction.Read: break;
                 case Instruction.Write: break;
-                case Instruction.Move: break;
+                case Instruction.Move:
+                {
+                    var isRegister = (opcode & (1U << 26)) != 0;
+                    var destination = (opcode >> 22) & ((1U << 4) - 1);
+                    var source = opcode & ((1U << 22) - 1);
+
+                    SetRegister(destination, isRegister ? GetRegister(source) : source);
+                    break;
+                }
                 case Instruction.In: break;
-                case Instruction.Out: break;
+                case Instruction.Out:
+                {
+                    var isRegister = (opcode & (1U << 26)) != 0;
+                    var destination = (opcode >> 22) & ((1U << 4) - 1);
+                    var source = opcode & ((1U << 22) - 1);
+
+                    Computer.PortWrite(GetRegister(destination), isRegister ? GetRegister(source) : source);
+                    break;
+                }
                 case Instruction.Cmp: break;
 
                 // Type 2 instructions
-                case Instruction.Push: break;
+                case Instruction.Push:
+                {
+                    var isRegister = (opcode & (1U << 26)) != 0;
+                    var source = opcode & ((1U << 26) - 1);
+
+                    Computer.MemoryWrite64(Computer.R1, isRegister ? GetRegister(source) : source);
+                    Computer.R1 += sizeof(ulong);
+                    break;
+                }
                 case Instruction.Jump: break;
                 case Instruction.Call: break;
                 case Instruction.Jb: break;
@@ -63,7 +87,14 @@ public static class Executor
                 case Instruction.Jae: break;
 
                 // Type 3 instructions
-                case Instruction.Pop: break;
+                case Instruction.Pop:
+                {
+                    var destination = (opcode >> 23) & ((1U << 4) - 1);
+
+                    Computer.R1 -= 8;
+                    SetRegister(destination, Computer.MemoryRead64(Computer.R1));
+                    break;
+                }
 
                 // Type 4 instructions
                 case Instruction.Ret: break;

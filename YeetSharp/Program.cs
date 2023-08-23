@@ -20,7 +20,7 @@ public static class Program
         if (!_showHelp) StartCPU();
     }
 
-    #region Func
+    #region Argument Handling
 
     /// <summary>
     /// Handle every known argument, if any.
@@ -125,10 +125,9 @@ public static class Program
         Yeet64.Interpreter.Computer.Load(code.ToArray());
         Yeet64.Interpreter.Executor.Execute();
 
-        Console.WriteLine();
-        if (_showRegisters) Yeet8.Interpreter.Computer.PrintRegisters();
-
         Utils.PrintInfo("CPU Emulation ended");
+
+        if (_showRegisters) Console.WriteLine(Yeet64.Interpreter.Computer.PrintRegisters());
     }
 
     private static void Yeet8CPU()
@@ -148,10 +147,9 @@ public static class Program
         Yeet8.Interpreter.Computer.Load(code);
         Yeet8.Interpreter.Executor.Execute();
 
-        Console.WriteLine();
-        if (_showRegisters) Yeet8.Interpreter.Computer.PrintRegisters();
-
         Utils.PrintInfo("CPU Emulation ended");
+
+        if (_showRegisters) Yeet8.Interpreter.Computer.PrintRegisters();
     }
 
     #endregion
