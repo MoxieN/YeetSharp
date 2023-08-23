@@ -12,7 +12,7 @@ public abstract class Lexer
 
     private int _index;
 
-    public Lexer(string file, bool includeCommas = true, bool includeWhitespaces = true, bool includeComments = true)
+    protected Lexer(string file, bool includeCommas = true, bool includeWhitespaces = true, bool includeComments = true)
     {
         if (!File.Exists(file)) throw new FileNotFoundException("LEXER HALTED: FileNotFound Exception");
 
