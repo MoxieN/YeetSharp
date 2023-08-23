@@ -1,18 +1,51 @@
-using System.Text;
+﻿using System.Text;
 
 namespace Yeet8;
 
-public static class Instruction
+public sealed class Instruction : Yeet.Common.Instruction
 {
-    public static uint Create(byte opcode, byte flags = 0, byte op1 = 0, byte op2 = 0, byte op3 = 0)
+    public override uint CreateType1(byte instruction, bool isRegister, uint destination, uint source)
     {
         var builder = new StringBuilder();
 
-        builder.Append(Convert.ToString(opcode, 2).PadLeft(5, '0'));
-        builder.Append(Convert.ToString(flags, 2).PadLeft(3, '0'));
-        builder.Append(Convert.ToString(op1, 2).PadLeft(8, '0'));
-        builder.Append(Convert.ToString(op2, 2).PadLeft(8, '0'));
-        builder.Append(Convert.ToString(op3, 2).PadLeft(8, '0'));
+        builder.Append(Convert.ToString(instruction, 2).PadLeft(5, '0'));
+        builder.Append(isRegister ? '1' : '0');
+        builder.Append(Convert.ToString(destination, 2).PadLeft(4, '0'));
+        builder.Append(Convert.ToString(source, 2).PadLeft(16, '0'));
+        builder.Append("000000");
+
+        return Convert.ToUInt32(builder.ToString(), 2);
+    }
+
+    public override uint CreateType2(byte instruction, bool isRegister, uint source)
+    {
+        var builder = new StringBuilder();
+
+        builder.Append(Convert.ToString(instruction, 2).PadLeft(5, '0'));
+        builder.Append(isRegister ? '1' : '0');
+        builder.Append(Convert.ToString(source, 2).PadLeft(16, '0'));
+        builder.Append("0000000000");
+
+        return Convert.ToUInt32(builder.ToString(), 2);
+    }
+
+    public override uint CreateType3(byte instruction, byte source)
+    {
+        var builder = new StringBuilder();
+
+        builder.Append(Convert.ToString(instruction, 2).PadLeft(5, '0'));
+        builder.Append(Convert.ToString(source, 2).PadLeft(4, '0'));
+        builder.Append("00000000000000000000000");
+
+        return Convert.ToUInt32(builder.ToString(), 2);
+    }
+
+    public override uint CreateType4(byte instruction)
+    {
+        var builder = new StringBuilder();
+
+        builder.Append(Convert.ToString(instruction, 2).PadLeft(5, '0'));
+        builder.Append("000000000000000000000000000");
 
         return Convert.ToUInt32(builder.ToString(), 2);
     }

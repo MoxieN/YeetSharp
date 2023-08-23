@@ -1,12 +1,12 @@
 using System.Data;
 using System.Diagnostics;
-using Yeet.Common.Assembler;
 
-namespace Yeet64.Assembler;
+namespace Yeet.Common.Assembler;
 
-public class Parser
+public sealed class Parser
 {
     private readonly List<Token> _tokens;
+    private readonly Instruction _instruction;
 
     private ulong _instructionAddress;
     private ulong _labelAddress;
@@ -14,9 +14,10 @@ public class Parser
 
     private int _index;
 
-    public Parser(ref List<Token> tokens)
+    public Parser(ref List<Token> tokens, Instruction instruction)
     {
         _tokens = tokens;
+        _instruction = instruction;
         _instructionAddress = 0;
         _labelAddress = 0;
         _onLabel = false;
@@ -26,7 +27,7 @@ public class Parser
     public List<byte> Run()
     {
         var code = new List<byte>();
-
+        
         while (_index < _tokens.Count)
         {
             var token = ExpectToken(TokenType.Opcode, TokenType.Label);
@@ -243,7 +244,7 @@ public class Parser
                 {
                     var operand1 = ExpectToken(TokenType.Register);
                     var operand2 = ExpectToken(TokenType.Register, TokenType.Number);
-                    var instruction = Instruction.CreateType1(
+                    var instruction = _instruction.CreateType1(
                         opcodeNumber,
                         operand2.Type is TokenType.Register,
                         uint.Parse(operand1.Text),
@@ -256,7 +257,7 @@ public class Parser
                 case 2:
                 {
                     var operand1 = ExpectToken(TokenType.Register, TokenType.Number);
-                    var instruction = Instruction.CreateType2(
+                    var instruction = _instruction.CreateType2(
                         opcodeNumber,
                         operand1.Type is TokenType.Register,
                         uint.Parse(operand1.Text)
@@ -268,7 +269,7 @@ public class Parser
                 case 3:
                 {
                     var operand1 = ExpectToken(TokenType.Register);
-                    var instruction = Instruction.CreateType3(
+                    var instruction = _instruction.CreateType3(
                         opcodeNumber,
                         byte.Parse(operand1.Text)
                     );
@@ -278,7 +279,7 @@ public class Parser
                 }
                 case 4:
                 {
-                    var instruction = Instruction.CreateType4(
+                    var instruction = _instruction.CreateType4(
                         opcodeNumber
                     );
 

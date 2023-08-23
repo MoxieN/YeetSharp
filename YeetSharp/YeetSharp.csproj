@@ -10,10 +10,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Update="yeet8test.asm">
-            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-        </None>
-        <None Update="yeet64test.asm">
+        <None Update="test.asm">
             <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
         </None>
     </ItemGroup>

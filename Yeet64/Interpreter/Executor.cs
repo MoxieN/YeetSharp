@@ -1,3 +1,5 @@
+using Yeet.Common;
+
 namespace Yeet64.Interpreter;
 
 public static class Executor

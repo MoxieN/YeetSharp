@@ -2,7 +2,7 @@ using System.Data;
 
 namespace Yeet.Common.Assembler;
 
-public abstract class Lexer
+public sealed class Lexer
 {
     public readonly bool IncludeCommas;
     public readonly bool IncludeWhitespaces;
@@ -12,7 +12,7 @@ public abstract class Lexer
 
     private int _index;
 
-    protected Lexer(string file, bool includeCommas = true, bool includeWhitespaces = true, bool includeComments = true)
+    public Lexer(string file, bool includeCommas = true, bool includeWhitespaces = true, bool includeComments = true)
     {
         if (!File.Exists(file)) throw new FileNotFoundException("LEXER HALTED: FileNotFound Exception");
 
@@ -127,5 +127,9 @@ public abstract class Lexer
         return tokens;
     }
 
-    protected abstract bool IsOpcode(string text);
+    private static bool IsOpcode(string text) => text
+        is "add" or "sub" or "mul" or "div" or "mod" or "and" or "or" or "xor" or "not" or "shl" or "shr" or "sal" or "sar"
+        or "read" or "write" or "move" or "push" or "pop"
+        or "in" or "out"
+        or "ret" or "jump" or "call" or "cmp" or "jb" or "ja" or "je" or "jne" or "jbe" or "jae";
 }

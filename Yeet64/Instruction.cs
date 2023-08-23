@@ -2,9 +2,9 @@
 
 namespace Yeet64;
 
-public static class Instruction
+public sealed class Instruction : Yeet.Common.Instruction
 {
-    public static uint CreateType1(byte instruction, bool isRegister, uint destination, uint source)
+    public override uint CreateType1(byte instruction, bool isRegister, uint destination, uint source)
     {
         var builder = new StringBuilder();
 
@@ -16,7 +16,7 @@ public static class Instruction
         return Convert.ToUInt32(builder.ToString(), 2);
     }
 
-    public static uint CreateType2(byte instruction, bool isRegister, uint source)
+    public override uint CreateType2(byte instruction, bool isRegister, uint source)
     {
         var builder = new StringBuilder();
 
@@ -27,7 +27,7 @@ public static class Instruction
         return Convert.ToUInt32(builder.ToString(), 2);
     }
 
-    public static uint CreateType3(byte instruction, byte source)
+    public override uint CreateType3(byte instruction, byte source)
     {
         var builder = new StringBuilder();
 
@@ -38,7 +38,7 @@ public static class Instruction
         return Convert.ToUInt32(builder.ToString(), 2);
     }
 
-    public static uint CreateType4(byte instruction)
+    public override uint CreateType4(byte instruction)
     {
         var builder = new StringBuilder();
 

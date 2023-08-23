@@ -1,4 +1,5 @@
 ﻿using Yeet.Common;
+using Yeet.Common.Assembler;
 
 namespace YeetSharp;
 
@@ -112,10 +113,10 @@ public static class Program
     {
         Utils.PrintInfo("Starting Yeet64 CPU emulation");
 
-        var lexer = new Yeet64.Assembler.Lexer("yeet64test.asm", false, false, false);
+        var lexer = new Lexer("test.asm", false, false, false);
         var tokens = lexer.Run();
 
-        var parser = new Yeet64.Assembler.Parser(ref tokens);
+        var parser = new Parser(ref tokens, new Yeet64.Instruction());
         var code = parser.Run();
 
         Yeet64.Interpreter.Computer.Initialize();
@@ -137,10 +138,10 @@ public static class Program
     {
         Utils.PrintInfo("Starting Yeet8 CPU emulation");
 
-        var lexer = new Yeet8.Assembler.Lexer("yeet8test.asm", false, false, false);
+        var lexer = new Lexer("test.asm", false, false, false);
         var tokens = lexer.Run();
 
-        var parser = new Yeet8.Assembler.Parser(ref tokens);
+        var parser = new Parser(ref tokens, new Yeet8.Instruction());
         var code = parser.Run();
 
         Yeet8.Interpreter.Computer.Initialize();
@@ -153,7 +154,7 @@ public static class Program
 
         if (_showRegisters)
         {
-            Utils.PrintInfo("DumpingCPU registers...");
+            Utils.PrintInfo("Dumping CPU registers...");
             Yeet8.Interpreter.Computer.PrintRegisters();
         }
     }
