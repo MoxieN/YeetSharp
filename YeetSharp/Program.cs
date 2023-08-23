@@ -38,13 +38,13 @@ public static class Program
     {
         _showHelp = true;
 
-        Console.WriteLine("This program will emulate CPUs for the Yeet8 and Yeet64 architectures.");
+        Console.WriteLine("This program will emulate CPUs for the Yeet-16 and Yeet-64 architectures.");
         Console.WriteLine("YeetSharp was made with love by Sartox Software and MoxieN!");
 
         Console.WriteLine("Arguments:");
         Console.WriteLine("-> -h      | Prints this page");
         Console.WriteLine("-> -regs   | Prints the registers");
-        Console.WriteLine("-> -aARCH* | Loads the correct CPU architecture, uses yeet64 by default (ex: -a8)");
+        Console.WriteLine("-> -aARCH* | Loads the correct CPU architecture, uses Yeet-64 by default (ex: -a16)");
         Console.WriteLine("'*' = (optional argument)");
     }
 
@@ -61,9 +61,9 @@ public static class Program
                 Yeet64CPU();
                 break;
             }
-            case 8:
+            case 16:
             {
-                Yeet8CPU();
+                Yeet16CPU();
                 break;
             }
             default:
@@ -111,7 +111,7 @@ public static class Program
 
     private static void Yeet64CPU()
     {
-        Utils.PrintInfo("Starting Yeet64 CPU emulation");
+        Utils.PrintInfo("Starting Yeet-64 CPU emulation");
 
         var lexer = new Lexer("test.asm", false, false, false);
         var tokens = lexer.Run();
@@ -134,29 +134,31 @@ public static class Program
         }
     }
 
-    private static void Yeet8CPU()
+    private static void Yeet16CPU()
     {
-        Utils.PrintInfo("Starting Yeet8 CPU emulation");
+        throw new NotImplementedException();
+
+        /*Utils.PrintInfo("Starting Yeet-16 CPU emulation");
 
         var lexer = new Lexer("test.asm", false, false, false);
         var tokens = lexer.Run();
 
-        var parser = new Parser(ref tokens, new Yeet8.Instruction());
+        var parser = new Parser(ref tokens, new Yeet16.Instruction());
         var code = parser.Run();
 
-        Yeet8.Interpreter.Computer.Initialize();
-        Yeet8.Interpreter.Computer.ClearMemory();
-        Yeet8.Interpreter.Computer.ClearPorts();
-        Yeet8.Interpreter.Computer.Load(code.ToArray());
-        Yeet8.Interpreter.Executor.Execute();
+        Yeet16.Interpreter.Computer.Initialize();
+        Yeet16.Interpreter.Computer.ClearMemory();
+        Yeet16.Interpreter.Computer.ClearPorts();
+        Yeet16.Interpreter.Computer.Load(code.ToArray());
+        Yeet16.Interpreter.Executor.Execute();
 
         Utils.PrintInfo("CPU Emulation ended");
 
         if (_showRegisters)
         {
             Utils.PrintInfo("Dumping CPU registers...");
-            Yeet8.Interpreter.Computer.PrintRegisters();
-        }
+            Yeet16.Interpreter.Computer.PrintRegisters();
+        }*/
     }
 
     #endregion

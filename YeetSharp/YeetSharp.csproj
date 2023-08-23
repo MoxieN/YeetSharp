@@ -17,7 +17,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Yeet64\Yeet64.csproj"/>
-        <ProjectReference Include="..\Yeet8\Yeet8.csproj"/>
+        <ProjectReference Include="..\Yeet16\Yeet16.csproj" />
     </ItemGroup>
 
 

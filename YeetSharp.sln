@@ -5,7 +5,7 @@ VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "YeetSharp", "YeetSharp\YeetSharp.csproj", "{C4C86899-1690-40C0-94E7-5B7B766093AE}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet8", "Yeet8\Yeet8.csproj", "{6D172CD4-9708-4007-B9FD-ACFD742727D2}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet16", "Yeet16\Yeet16.csproj", "{6D172CD4-9708-4007-B9FD-ACFD742727D2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Yeet.Common", "Yeet.Common\Yeet.Common.csproj", "{01378EF9-E5E9-4462-B115-92569C68AC08}"
 EndProject
