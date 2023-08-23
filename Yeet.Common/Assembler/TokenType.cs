@@ -2,7 +2,7 @@ namespace Yeet.Common.Assembler;
 
 public enum TokenType
 {
-    Instruction,
+    Opcode,
     Register,
     Comma,
     Whitespace,

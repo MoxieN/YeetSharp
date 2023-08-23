@@ -2,7 +2,7 @@ using System.Data;
 using System.Diagnostics;
 using Yeet.Common.Assembler;
 
-namespace Yeet64.Assembler;
+namespace Yeet8.Assembler;
 
 public class Parser
 {
@@ -27,7 +27,7 @@ public class Parser
             byte opcodeType, opcodeNumber;
             switch (opcode.Text)
             {
-                // Type 1 instructions
+                // R$, IM$, IM$
                 case "add":
                 {
                     opcodeNumber = OpCode.Add;
@@ -76,12 +76,6 @@ public class Parser
                     opcodeType = 1;
                     break;
                 }
-                case "not":
-                {
-                    opcodeNumber = OpCode.Not;
-                    opcodeType = 1;
-                    break;
-                }
                 case "shl":
                 {
                     opcodeNumber = OpCode.Shl;
@@ -106,112 +100,118 @@ public class Parser
                     opcodeType = 1;
                     break;
                 }
+
+                // R$, IM$
+                case "not":
+                {
+                    opcodeNumber = OpCode.Not;
+                    opcodeType = 2;
+                    break;
+                }
                 case "read":
                 {
                     opcodeNumber = OpCode.Read;
-                    opcodeType = 1;
-                    break;
-                }
-                case "write":
-                {
-                    opcodeNumber = OpCode.Write;
-                    opcodeType = 1;
+                    opcodeType = 2;
                     break;
                 }
                 case "move":
                 {
                     opcodeNumber = OpCode.Move;
-                    opcodeType = 1;
+                    opcodeType = 2;
                     break;
                 }
                 case "in":
                 {
                     opcodeNumber = OpCode.In;
-                    opcodeType = 1;
+                    opcodeType = 2;
+                    break;
+                }
+
+                // IM$, IM$
+                case "write":
+                {
+                    opcodeNumber = OpCode.Write;
+                    opcodeType = 3;
                     break;
                 }
                 case "out":
                 {
                     opcodeNumber = OpCode.Out;
-                    opcodeType = 1;
-                    break;
-                }
-                case "cmp":
-                {
-                    opcodeNumber = OpCode.Cmp;
-                    opcodeType = 1;
+                    opcodeType = 3;
                     break;
                 }
 
-                // Type 2 instructions
+                // IM$
                 case "push":
                 {
                     opcodeNumber = OpCode.Push;
-                    opcodeType = 2;
+                    opcodeType = 4;
                     break;
                 }
                 case "jump":
                 {
                     opcodeNumber = OpCode.Jump;
-                    opcodeType = 2;
+                    opcodeType = 4;
                     break;
                 }
                 case "call":
                 {
                     opcodeNumber = OpCode.Call;
-                    opcodeType = 2;
+                    opcodeType = 4;
                     break;
                 }
+
+                // R$
+                case "pop":
+                {
+                    opcodeNumber = OpCode.Pop;
+                    opcodeType = 5;
+                    break;
+                }
+
+                // IM$, IM$, IM$
                 case "jb":
                 {
                     opcodeNumber = OpCode.Jb;
-                    opcodeType = 2;
+                    opcodeType = 6;
                     break;
                 }
                 case "ja":
                 {
                     opcodeNumber = OpCode.Ja;
-                    opcodeType = 2;
+                    opcodeType = 6;
                     break;
                 }
                 case "je":
                 {
                     opcodeNumber = OpCode.Je;
-                    opcodeType = 2;
+                    opcodeType = 6;
                     break;
                 }
                 case "jne":
                 {
                     opcodeNumber = OpCode.Jne;
-                    opcodeType = 2;
+                    opcodeType = 6;
                     break;
                 }
                 case "jbe":
                 {
                     opcodeNumber = OpCode.Jbe;
-                    opcodeType = 2;
+                    opcodeType = 6;
                     break;
                 }
                 case "jae":
                 {
                     opcodeNumber = OpCode.Jae;
-                    opcodeType = 2;
+                    opcodeType = 6;
                     break;
                 }
 
-                // Type 3 instructions
-                case "pop":
-                {
-                    opcodeNumber = OpCode.Pop;
-                    opcodeType = 3;
-                    break;
-                }
-
-                // Type 4 instructions
+                // <none>
                 case "ret":
                 {
                     opcodeNumber = OpCode.Ret;
-                    opcodeType = 4;
+                    opcodeType = 7;
                     break;
                 }
 
@@ -222,13 +222,20 @@ public class Parser
             {
                 case 1:
                 {
-                    var operand1 = ExpectToken(TokenType.Register);
-                    var operand2 = ExpectToken(TokenType.Register, TokenType.Number);
-                    var instruction = Instruction.CreateType1(
+                    var destination = ExpectToken(TokenType.Register);
+                    var source1 = ExpectToken(TokenType.Register, TokenType.Number);
+                    var source2 = ExpectToken(TokenType.Register, TokenType.Number);
+
+                    var flags = Flag.Op1Register;
+                    if (source1.Type is TokenType.Register) flags |= Flag.Op2Register;
+                    if (source2.Type is TokenType.Register) flags |= Flag.Op3Register;
+
+                    var instruction = Instruction.Create(
                         opcodeNumber,
-                        operand2.Type is TokenType.Register,
-                        uint.Parse(operand1.Text),
-                        uint.Parse(operand2.Text)
+                        flags,
+                        byte.Parse(destination.Text),
+                        byte.Parse(source1.Text),
+                        byte.Parse(source2.Text)
                     );
 
                     code.AddRange(BitConverter.GetBytes(instruction));
@@ -236,11 +243,17 @@ public class Parser
                 }
                 case 2:
                 {
-                    var operand1 = ExpectToken(TokenType.Register, TokenType.Number);
-                    var instruction = Instruction.CreateType2(
+                    var destination = ExpectToken(TokenType.Register);
+                    var source = ExpectToken(TokenType.Register, TokenType.Number);
+
+                    var flags = Flag.Op1Register;
+                    if (source.Type is TokenType.Register) flags |= Flag.Op2Register;
+
+                    var instruction = Instruction.Create(
                         opcodeNumber,
-                        operand1.Type is TokenType.Register,
-                        uint.Parse(operand1.Text)
+                        flags,
+                        byte.Parse(destination.Text),
+                        byte.Parse(source.Text)
                     );
 
                     code.AddRange(BitConverter.GetBytes(instruction));
@@ -248,10 +261,18 @@ public class Parser
                 }
                 case 3:
                 {
-                    var operand1 = ExpectToken(TokenType.Register);
-                    var instruction = Instruction.CreateType3(
+                    var destination = ExpectToken(TokenType.Register, TokenType.Number);
+                    var source = ExpectToken(TokenType.Register, TokenType.Number);
+
+                    byte flags = 0;
+                    if (destination.Type is TokenType.Register) flags |= Flag.Op1Register;
+                    if (source.Type is TokenType.Register) flags |= Flag.Op2Register;
+
+                    var instruction = Instruction.Create(
                         opcodeNumber,
-                        byte.Parse(operand1.Text)
+                        flags,
+                        byte.Parse(destination.Text),
+                        byte.Parse(source.Text)
                     );
 
                     code.AddRange(BitConverter.GetBytes(instruction));
@@ -259,7 +280,53 @@ public class Parser
                 }
                 case 4:
                 {
-                    var instruction = Instruction.CreateType4(
+                    var destination = ExpectToken(TokenType.Register, TokenType.Number);
+                    var instruction = Instruction.Create(
+                        opcodeNumber,
+                        destination.Type is TokenType.Register ? Flag.Op1Register : (byte)0,
+                        byte.Parse(destination.Text)
+                    );
+
+                    code.AddRange(BitConverter.GetBytes(instruction));
+                    break;
+                }
+                case 5:
+                {
+                    var destination = ExpectToken(TokenType.Register);
+                    var instruction = Instruction.Create(
+                        opcodeNumber,
+                        Flag.Op1Register,
+                        byte.Parse(destination.Text)
+                    );
+
+                    code.AddRange(BitConverter.GetBytes(instruction));
+                    break;
+                }
+                case 6:
+                {
+                    var destination = ExpectToken(TokenType.Register, TokenType.Number);
+                    var source1 = ExpectToken(TokenType.Register, TokenType.Number);
+                    var source2 = ExpectToken(TokenType.Register, TokenType.Number);
+
+                    byte flags = 0;
+                    if (destination.Type is TokenType.Register) flags |= Flag.Op1Register;
+                    if (source1.Type is TokenType.Register) flags |= Flag.Op2Register;
+                    if (source2.Type is TokenType.Register) flags |= Flag.Op3Register;
+
+                    var instruction = Instruction.Create(
+                        opcodeNumber,
+                        flags,
+                        byte.Parse(destination.Text),
+                        byte.Parse(source1.Text),
+                        byte.Parse(source2.Text)
+                    );
+
+                    code.AddRange(BitConverter.GetBytes(instruction));
+                    break;
+                }
+                case 7:
+                {
+                    var instruction = Instruction.Create(
                         opcodeNumber
                     );
 

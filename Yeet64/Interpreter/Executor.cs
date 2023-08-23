@@ -10,7 +10,7 @@ public static class Executor
 
         while (Computer.R0 < Computer.MemorySize && Computer.PoweredOn)
         {
-            var opcode = (uint)
+            var instruction = (uint)
             (
                 Computer.MemoryRead8(Computer.R0++)
                 | (Computer.MemoryRead8(Computer.R0++) << 8)
@@ -18,78 +18,78 @@ public static class Executor
                 | (Computer.MemoryRead8(Computer.R0++) << 24)
             );
 
-            var instruction = (opcode >> 27) & ((1U << 5) - 1);
+            var opcode = (instruction >> 27) & ((1U << 5) - 1);
 
-            switch (instruction)
+            switch (opcode)
             {
                 // Type 1 instructions
-                case Instruction.Add:
+                case OpCode.Add:
                 {
-                    var isRegister = (opcode & (1U << 26)) != 0;
-                    var destination = (opcode >> 22) & ((1U << 4) - 1);
-                    var source = opcode & ((1U << 22) - 1);
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
 
                     SetRegister(destination, GetRegister(destination) + (isRegister ? GetRegister(source) : source));
                     break;
                 }
-                case Instruction.Sub: break;
-                case Instruction.Mul: break;
-                case Instruction.Div: break;
-                case Instruction.Mod: break;
-                case Instruction.And: break;
-                case Instruction.Or: break;
-                case Instruction.Xor: break;
-                case Instruction.Not: break;
-                case Instruction.Shl: break;
-                case Instruction.Shr: break;
-                case Instruction.Sal: break;
-                case Instruction.Sar: break;
-                case Instruction.Read: break;
-                case Instruction.Write: break;
-                case Instruction.Move:
+                case OpCode.Sub: break;
+                case OpCode.Mul: break;
+                case OpCode.Div: break;
+                case OpCode.Mod: break;
+                case OpCode.And: break;
+                case OpCode.Or: break;
+                case OpCode.Xor: break;
+                case OpCode.Not: break;
+                case OpCode.Shl: break;
+                case OpCode.Shr: break;
+                case OpCode.Sal: break;
+                case OpCode.Sar: break;
+                case OpCode.Read: break;
+                case OpCode.Write: break;
+                case OpCode.Move:
                 {
-                    var isRegister = (opcode & (1U << 26)) != 0;
-                    var destination = (opcode >> 22) & ((1U << 4) - 1);
-                    var source = opcode & ((1U << 22) - 1);
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
 
                     SetRegister(destination, isRegister ? GetRegister(source) : source);
                     break;
                 }
-                case Instruction.In: break;
-                case Instruction.Out:
+                case OpCode.In: break;
+                case OpCode.Out:
                 {
-                    var isRegister = (opcode & (1U << 26)) != 0;
-                    var destination = (opcode >> 22) & ((1U << 4) - 1);
-                    var source = opcode & ((1U << 22) - 1);
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
 
                     Computer.PortWrite(GetRegister(destination), isRegister ? GetRegister(source) : source);
                     break;
                 }
-                case Instruction.Cmp: break;
+                case OpCode.Cmp: break;
 
                 // Type 2 instructions
-                case Instruction.Push:
+                case OpCode.Push:
                 {
-                    var isRegister = (opcode & (1U << 26)) != 0;
-                    var source = opcode & ((1U << 26) - 1);
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var source = instruction & ((1U << 26) - 1);
 
                     Computer.MemoryWrite64(Computer.R1, isRegister ? GetRegister(source) : source);
                     Computer.R1 += sizeof(ulong);
                     break;
                 }
-                case Instruction.Jump: break;
-                case Instruction.Call: break;
-                case Instruction.Jb: break;
-                case Instruction.Ja: break;
-                case Instruction.Je: break;
-                case Instruction.Jne: break;
-                case Instruction.Jbe: break;
-                case Instruction.Jae: break;
+                case OpCode.Jump: break;
+                case OpCode.Call: break;
+                case OpCode.Jb: break;
+                case OpCode.Ja: break;
+                case OpCode.Je: break;
+                case OpCode.Jne: break;
+                case OpCode.Jbe: break;
+                case OpCode.Jae: break;
 
                 // Type 3 instructions
-                case Instruction.Pop:
+                case OpCode.Pop:
                 {
-                    var destination = (opcode >> 23) & ((1U << 4) - 1);
+                    var destination = (instruction >> 23) & ((1U << 4) - 1);
 
                     Computer.R1 -= 8;
                     SetRegister(destination, Computer.MemoryRead64(Computer.R1));
@@ -97,7 +97,7 @@ public static class Executor
                 }
 
                 // Type 4 instructions
-                case Instruction.Ret: break;
+                case OpCode.Ret: break;
             }
         }
     }

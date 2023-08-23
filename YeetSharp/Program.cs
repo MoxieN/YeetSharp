@@ -1,5 +1,4 @@
 ﻿using Yeet.Common;
-using Yeet64.Assembler;
 
 namespace YeetSharp;
 
@@ -116,7 +115,7 @@ public static class Program
         var lexer = new Yeet64.Assembler.Lexer("yeet64test.asm", false, false, false);
         var tokens = lexer.Run();
 
-        var parser = new Parser(ref tokens);
+        var parser = new Yeet64.Assembler.Parser(ref tokens);
         var code = parser.Run();
 
         Yeet64.Interpreter.Computer.Initialize();
@@ -134,17 +133,16 @@ public static class Program
     {
         Utils.PrintInfo("Starting Yeet8 CPU emulation");
 
-        var asmInstructions = Yeet8.Assembler.Lexer.LexInstructions("yeet8test.asm");
-        foreach (var i in asmInstructions)
-            Console.WriteLine(i.ToString());
+        var lexer = new Yeet8.Assembler.Lexer("yeet8test.asm", false, false, false);
+        var tokens = lexer.Run();
+
+        var parser = new Yeet8.Assembler.Parser(ref tokens);
+        var code = parser.Run();
 
         Yeet8.Interpreter.Computer.Initialize();
         Yeet8.Interpreter.Computer.ClearMemory();
         Yeet8.Interpreter.Computer.ClearPorts();
-
-        var code = Yeet8.Assembler.Parse.ParseInstructions(asmInstructions);
-
-        Yeet8.Interpreter.Computer.Load(code);
+        Yeet8.Interpreter.Computer.Load(code.ToArray());
         Yeet8.Interpreter.Executor.Execute();
 
         Utils.PrintInfo("CPU Emulation ended");

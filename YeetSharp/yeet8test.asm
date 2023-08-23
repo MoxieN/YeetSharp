@@ -7,7 +7,10 @@ push r2
 pop r3
 
 # Prints 'A' to the screen
-out 0x03 r3
+out 3, r3
+
+# Prints a new line to the screen
+out 3, 10
 
 # Tells the processor to shut down
-out 0x02
+out 2, 0

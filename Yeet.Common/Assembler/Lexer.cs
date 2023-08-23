@@ -80,10 +80,10 @@ public abstract class Lexer
 
                         var substring = _text.Substring(start, end - start).ToLowerInvariant();
 
-                        // Check if substring is an instruction or a register
-                        if (IsInstruction(substring))
+                        // Check if substring is an opcode or a register
+                        if (IsOpcode(substring))
                         {
-                            tokens.Add(new Token(TokenType.Instruction, substring));
+                            tokens.Add(new Token(TokenType.Opcode, substring));
                         }
                         else if (substring[0] is 'r' && byte.TryParse(substring = substring[1..], out var num) && num <= 15)
                         {
@@ -121,5 +121,5 @@ public abstract class Lexer
         return tokens;
     }
 
-    protected abstract bool IsInstruction(string text);
+    protected abstract bool IsOpcode(string text);
 }
