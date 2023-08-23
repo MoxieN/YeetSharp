@@ -182,7 +182,7 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    Computer.R0 = isRegister ? GetRegister(source) : source;
+                    Computer.R0 = Computer.StackSize + (isRegister ? GetRegister(source) : source);
                     break;
                 }
 
@@ -195,7 +195,7 @@ public static class Executor
                     Computer.MemoryWrite64(Computer.R1, Computer.R0);
                     Computer.R1 += sizeof(ulong);
 
-                    Computer.R0 = isRegister ? GetRegister(source) : source;
+                    Computer.R0 = Computer.StackSize + (isRegister ? GetRegister(source) : source);
                     break;
                 }
 
