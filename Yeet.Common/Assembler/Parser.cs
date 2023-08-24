@@ -1,3 +1,5 @@
+using System;
+using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 
@@ -27,7 +29,7 @@ public sealed class Parser
     public List<byte> Run()
     {
         var code = new List<byte>();
-        
+
         while (_index < _tokens.Count)
         {
             var token = ExpectToken(TokenType.Opcode, TokenType.Label);
@@ -299,9 +301,7 @@ public sealed class Parser
 
         var token = _tokens[_index++];
         if (token.Type != type)
-        {
             throw new SyntaxErrorException($"PARSER EXCEPTION: Expected token type \"{type}\", found \"{token.Type}\"");
-        }
 
         return token;
     }
@@ -312,10 +312,8 @@ public sealed class Parser
 
         var token = _tokens[_index++];
         if (token.Type != type1 && token.Type != type2)
-        {
             throw new SyntaxErrorException(
                 $"PARSER EXCEPTION: Expected token type \"{type1}\" or \"{type2}\", found \"{token.Type}\"");
-        }
 
         return token;
     }

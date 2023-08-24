@@ -20,7 +20,7 @@ public static class Program
         if (!_showHelp) StartCPU();
     }
 
-    #region Argument Handling
+    #region Arguments Handling
 
     /// <summary>
     /// Handle every known argument, if any.
@@ -88,8 +88,9 @@ public static class Program
             }
 
             if (!arg.StartsWith("-a")) continue;
-            if (archPresent) Utils.PrintError(
-                "You can't use more than one architecture, please refer to the help section using the argument '-h'.");
+            if (archPresent)
+                Utils.PrintError(
+                    "You can't use more than one architecture, please refer to the help section using the argument '-h'.");
 
             archPresent = true;
 
@@ -127,11 +128,9 @@ public static class Program
 
         Utils.PrintInfo("CPU Emulation ended");
 
-        if (_showRegisters)
-        {
-            Utils.PrintInfo("Dumping CPU registers...");
-            Console.WriteLine(Yeet64.Interpreter.Computer.PrintRegisters());
-        }
+        if (!_showRegisters) return;
+        Utils.PrintInfo("Dumping CPU registers...");
+        Console.WriteLine(Yeet64.Interpreter.Computer.PrintRegisters());
     }
 
     private static void Yeet16CPU()

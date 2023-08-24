@@ -1,4 +1,6 @@
+using System.Collections.Generic;
 using System.Data;
+using System.IO;
 
 namespace Yeet.Common.Assembler;
 
@@ -82,23 +84,16 @@ public sealed class Lexer
 
                         // Check if substring is an opcode or a register
                         if (IsOpcode(substring))
-                        {
                             tokens.Add(new Token(TokenType.Opcode, substring));
-                        }
                         // Check if the string is a register
-                        else if (substring[0] is 'r' && byte.TryParse(substring = substring[1..], out var num) && num <= 15)
-                        {
+                        else if (substring[0] is 'r' && byte.TryParse(substring = substring[1..], out var num) &&
+                                 num <= 15)
                             tokens.Add(new Token(TokenType.Register, substring));
-                        }
                         // Checks if the string is a label
                         else if (_index < _text.Length && _text[_index++] == ':')
-                        {
                             tokens.Add(new Token(TokenType.Label, substring));
-                        }
                         else
-                        {
                             throw new SyntaxErrorException($"LEXER HALTED: Invalid string \"{substring}\"");
-                        }
                     }
                     else if (character == '#')
                     {
@@ -127,9 +122,13 @@ public sealed class Lexer
         return tokens;
     }
 
-    private static bool IsOpcode(string text) => text
-        is "add" or "sub" or "mul" or "div" or "mod" or "and" or "or" or "xor" or "not" or "shl" or "shr" or "sal" or "sar"
-        or "read" or "write" or "move" or "push" or "pop"
-        or "in" or "out"
-        or "ret" or "jump" or "call" or "cmp" or "jb" or "ja" or "je" or "jne" or "jbe" or "jae";
+    private static bool IsOpcode(string text)
+    {
+        return text
+            is "add" or "sub" or "mul" or "div" or "mod" or "and" or "or" or "xor" or "not" or "shl" or "shr" or "sal"
+            or "sar"
+            or "read" or "write" or "move" or "push" or "pop"
+            or "in" or "out"
+            or "ret" or "jump" or "call" or "cmp" or "jb" or "ja" or "je" or "jne" or "jbe" or "jae";
+    }
 }

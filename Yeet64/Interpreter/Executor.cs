@@ -1,3 +1,4 @@
+using System;
 using Yeet.Common;
 
 namespace Yeet64.Interpreter;
@@ -32,7 +33,8 @@ public static class Executor
                     var source = instruction & ((1U << 22) - 1); // Gets 22 bits starting from the first
 
                     // Gets register value if source is register, else uses source value directly to set the destination register's value
-                    SetRegister(destination, GetRegister(destination) + (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) + (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -42,7 +44,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) - (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) - (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -52,7 +55,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) * (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) * (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -62,7 +66,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) / (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) / (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -72,7 +77,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) % (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) % (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -82,7 +88,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) & (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) & (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -92,7 +99,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) | (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) | (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -102,7 +110,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, GetRegister(destination) ^ (isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.GetRegister(destination) ^ (isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -116,7 +125,15 @@ public static class Executor
 
                 case OpCode.Read: throw new NotImplementedException();
 
-                case OpCode.Write: throw new NotImplementedException();
+                case OpCode.Write:
+                {
+                    var isRegister = (instruction & (1U << 26)) != 0;
+                    var destination = (instruction >> 22) & ((1U << 4) - 1);
+                    var source = instruction & ((1U << 22) - 1);
+                    
+                    Computer.MemoryWrite64(destination, isRegister ? Computer.GetRegister(source) : source);
+                    break;
+                }
 
                 case OpCode.Move:
                 {
@@ -124,7 +141,7 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, isRegister ? GetRegister(source) : source);
+                    Computer.SetRegister(destination, isRegister ? Computer.GetRegister(source) : source);
                     break;
                 }
 
@@ -134,7 +151,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    SetRegister(destination, Computer.PortRead(isRegister ? GetRegister(source) : source));
+                    Computer.SetRegister(destination,
+                        Computer.PortRead(isRegister ? Computer.GetRegister(source) : source));
                     break;
                 }
 
@@ -144,7 +162,8 @@ public static class Executor
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
 
-                    Computer.PortWrite(GetRegister(destination), isRegister ? GetRegister(source) : source);
+                    Computer.PortWrite(Computer.GetRegister(destination),
+                        isRegister ? Computer.GetRegister(source) : source);
                     break;
                 }
 
@@ -154,8 +173,8 @@ public static class Executor
                     var operand1 = (instruction >> 22) & ((1U << 4) - 1);
                     var operand2 = instruction & ((1U << 22) - 1);
 
-                    var source1 = GetRegister(operand1);
-                    var source2 = isRegister ? GetRegister(operand2) : operand2;
+                    var source1 = Computer.GetRegister(operand1);
+                    var source2 = isRegister ? Computer.GetRegister(operand2) : operand2;
 
                     if (source1 < source2) Computer.R2 |= Flag.Below;
                     if (source1 > source2) Computer.R2 |= Flag.Above;
@@ -172,8 +191,7 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    Computer.MemoryWrite64(Computer.R1, isRegister ? GetRegister(source) : source);
-                    Computer.R1 += sizeof(ulong);
+                    Computer.PushStack(isRegister ? Computer.GetRegister(source) : source);
                     break;
                 }
 
@@ -182,7 +200,7 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    Computer.R0 = Computer.StackSize + (isRegister ? GetRegister(source) : source);
+                    Computer.R0 = Computer.StackSize + (isRegister ? Computer.GetRegister(source) : source);
                     break;
                 }
 
@@ -195,7 +213,7 @@ public static class Executor
                     Computer.MemoryWrite64(Computer.R1, Computer.R0);
                     Computer.R1 += sizeof(ulong);
 
-                    Computer.R0 = Computer.StackSize + (isRegister ? GetRegister(source) : source);
+                    Computer.R0 = Computer.StackSize + (isRegister ? Computer.GetRegister(source) : source);
                     break;
                 }
 
@@ -204,7 +222,8 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    if ((Computer.R2 & Flag.Below) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    if ((Computer.R2 & Flag.Below) != 0)
+                        Computer.R0 = isRegister ? Computer.GetRegister(source) : source;
                     break;
                 }
 
@@ -213,7 +232,8 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    if ((Computer.R2 & Flag.Above) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    if ((Computer.R2 & Flag.Above) != 0)
+                        Computer.R0 = isRegister ? Computer.GetRegister(source) : source;
                     break;
                 }
 
@@ -222,7 +242,8 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    if ((Computer.R2 & Flag.Equal) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    if ((Computer.R2 & Flag.Equal) != 0)
+                        Computer.R0 = isRegister ? Computer.GetRegister(source) : source;
                     break;
                 }
 
@@ -231,7 +252,8 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    if ((Computer.R2 & Flag.NotEqual) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    if ((Computer.R2 & Flag.NotEqual) != 0)
+                        Computer.R0 = isRegister ? Computer.GetRegister(source) : source;
                     break;
                 }
 
@@ -240,7 +262,8 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    if ((Computer.R2 & Flag.BelowOrEqual) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    if ((Computer.R2 & Flag.BelowOrEqual) != 0)
+                        Computer.R0 = isRegister ? Computer.GetRegister(source) : source;
                     break;
                 }
 
@@ -249,7 +272,8 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var source = instruction & ((1U << 26) - 1);
 
-                    if ((Computer.R2 & Flag.AboveOrEqual) != 0) Computer.R0 = isRegister ? GetRegister(source) : source;
+                    if ((Computer.R2 & Flag.AboveOrEqual) != 0)
+                        Computer.R0 = isRegister ? Computer.GetRegister(source) : source;
                     break;
                 }
 
@@ -257,9 +281,7 @@ public static class Executor
                 case OpCode.Pop:
                 {
                     var destination = (instruction >> 23) & ((1U << 4) - 1);
-
-                    Computer.R1 -= 8;
-                    SetRegister(destination, Computer.MemoryRead64(Computer.R1));
+                    Computer.SetRegister(destination, Computer.PopStack());
                     break;
                 }
 
@@ -267,7 +289,7 @@ public static class Executor
                 {
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
 
-                    SetRegister(destination, ~GetRegister(destination));
+                    Computer.SetRegister(destination, ~Computer.GetRegister(destination));
                     break;
                 }
 
@@ -284,86 +306,6 @@ public static class Executor
     }
 
     #region Helpers
-
-    private static ulong GetRegister(uint index)
-    {
-        return index switch
-        {
-            0 => Computer.R0,
-            1 => Computer.R1,
-            2 => Computer.R2,
-            3 => Computer.R3,
-            4 => Computer.R4,
-            5 => Computer.R5,
-            6 => Computer.R6,
-            7 => Computer.R7,
-            8 => Computer.R8,
-            9 => Computer.R9,
-            10 => Computer.R10,
-            11 => Computer.R11,
-            12 => Computer.R12,
-            13 => Computer.R13,
-            14 => Computer.R14,
-            15 => Computer.R15,
-            _ => throw new InvalidOperationException($"Trying to get invalid register: R{index}")
-        };
-    }
-
-    private static void SetRegister(uint index, ulong value)
-    {
-        switch (index)
-        {
-            case 0:
-                Computer.R0 = value;
-                break;
-            case 1:
-                Computer.R1 = value;
-                break;
-            case 2:
-                Computer.R2 = value;
-                break;
-            case 3:
-                Computer.R3 = value;
-                break;
-            case 4:
-                Computer.R4 = value;
-                break;
-            case 5:
-                Computer.R5 = value;
-                break;
-            case 6:
-                Computer.R6 = value;
-                break;
-            case 7:
-                Computer.R7 = value;
-                break;
-            case 8:
-                Computer.R8 = value;
-                break;
-            case 9:
-                Computer.R9 = value;
-                break;
-            case 10:
-                Computer.R10 = value;
-                break;
-            case 11:
-                Computer.R11 = value;
-                break;
-            case 12:
-                Computer.R12 = value;
-                break;
-            case 13:
-                Computer.R13 = value;
-                break;
-            case 14:
-                Computer.R14 = value;
-                break;
-            case 15:
-                Computer.R15 = value;
-                break;
-            default: throw new InvalidOperationException($"Trying to set invalid register: R{index}");
-        }
-    }
 
     #endregion
 }

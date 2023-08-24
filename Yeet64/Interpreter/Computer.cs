@@ -1,3 +1,4 @@
+using System;
 using System.Text;
 using Yeet.Common;
 
@@ -128,10 +129,7 @@ public static class Computer
     {
         var codeSize = (ulong)code.Length;
 
-        if (codeSize > MaxCodeSize)
-        {
-            Utils.AbortLoad($"Code size ({codeSize}) > Max code size ({MaxCodeSize})");
-        }
+        if (codeSize > MaxCodeSize) Utils.AbortLoad($"Code size ({codeSize}) > Max code size ({MaxCodeSize})");
 
         for (var i = 0UL; i < codeSize; i++) Memory[StackSize + i] = code[i];
     }
@@ -148,22 +146,48 @@ public static class Computer
         Memory[address + 7] = (byte)((value >> 56) & 0xFF);
     }
 
-    public static ulong MemoryRead64(ulong address) => Memory[address]
-                                                       | ((ulong)Memory[address + 1] << 8)
-                                                       | ((ulong)Memory[address + 2] << 16)
-                                                       | ((ulong)Memory[address + 3] << 24)
-                                                       | ((ulong)Memory[address + 4] << 32)
-                                                       | ((ulong)Memory[address + 5] << 40)
-                                                       | ((ulong)Memory[address + 6] << 48)
-                                                       | ((ulong)Memory[address + 7] << 56);
+    public static ulong MemoryRead64(ulong address)
+    {
+        return Memory[address]
+               | ((ulong)Memory[address + 1] << 8)
+               | ((ulong)Memory[address + 2] << 16)
+               | ((ulong)Memory[address + 3] << 24)
+               | ((ulong)Memory[address + 4] << 32)
+               | ((ulong)Memory[address + 5] << 40)
+               | ((ulong)Memory[address + 6] << 48)
+               | ((ulong)Memory[address + 7] << 56);
+    }
 
     public static void PortWrite(ulong port, ulong value)
     {
-        Ports[port] = value;
-        PortEvents[port]();
+        try
+        {
+            Ports[port] = value;
+            PortEvents[port]();
+        }
+        catch (IndexOutOfRangeException)
+        {
+            Utils.PrintError($"Port {port} out of range exception");
+        }
+        
     }
 
-    public static ulong PortRead(ulong port) => Ports[port];
+    public static ulong PortRead(ulong port)
+    {
+        return Ports[port];
+    }
+
+    public static void PushStack(ulong value)
+    {
+        MemoryWrite64(R1, value);
+        R1 += sizeof(ulong);
+    }
+
+    public static ulong PopStack()
+    {
+        R1 -= 8;
+        return MemoryRead64(R1);
+    }
 
     #region Helpers
 
@@ -175,8 +199,15 @@ public static class Computer
         {
             case 0: // Emulator shut down
             {
+                Utils.PrintInfo("Syscall 0 received");
                 Utils.PrintInfo("Received shut down signal from program");
                 PoweredOn = false;
+                break;
+            }
+            case 1:
+            {
+                Utils.PrintInfo("Syscall 1 received");
+                Console.Write((char) R3);
                 break;
             }
             default:
@@ -187,13 +218,99 @@ public static class Computer
         }
     }
 
+    public static ulong GetRegister(uint index)
+    {
+        return index switch
+        {
+            0 => R0,
+            1 => R1,
+            2 => R2,
+            3 => R3,
+            4 => R4,
+            5 => R5,
+            6 => R6,
+            7 => R7,
+            8 => R8,
+            9 => R9,
+            10 => R10,
+            11 => R11,
+            12 => R12,
+            13 => R13,
+            14 => R14,
+            15 => R15,
+            _ => throw new InvalidOperationException($"Trying to get invalid register: R{index}")
+        };
+    }
+
+    public static void SetRegister(uint index, ulong value)
+    {
+        switch (index)
+        {
+            case 0:
+                R0 = value;
+                break;
+            case 1:
+                R1 = value;
+                break;
+            case 2:
+                R2 = value;
+                break;
+            case 3:
+                R3 = value;
+                break;
+            case 4:
+                R4 = value;
+                break;
+            case 5:
+                R5 = value;
+                break;
+            case 6:
+                R6 = value;
+                break;
+            case 7:
+                R7 = value;
+                break;
+            case 8:
+                R8 = value;
+                break;
+            case 9:
+                R9 = value;
+                break;
+            case 10:
+                R10 = value;
+                break;
+            case 11:
+                R11 = value;
+                break;
+            case 12:
+                R12 = value;
+                break;
+            case 13:
+                R13 = value;
+                break;
+            case 14:
+                R14 = value;
+                break;
+            case 15:
+                R15 = value;
+                break;
+            default: throw new InvalidOperationException($"Trying to set invalid register: R{index}");
+        }
+    }
+
     #endregion
 
     #region Memory operations for internal use, not exposed by any instructions
 
-    internal static void MemoryWrite8(ulong address, byte value) => Memory[address] = value;
+    internal static void MemoryWrite8(ulong address, byte value)
+    {
+        Memory[address] = value;
+    }
 
-    internal static byte MemoryRead8(ulong address) => Memory[address];
+    internal static byte MemoryRead8(ulong address)
+    {
+        return Memory[address];
+    }
 
     #endregion
 }
