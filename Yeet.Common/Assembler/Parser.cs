@@ -301,7 +301,7 @@ public sealed class Parser
 
         var token = _tokens[_index++];
         if (token.Type != type)
-            throw new SyntaxErrorException($"PARSER EXCEPTION: Expected token type \"{type}\", found \"{token.Type}\"");
+            Utils.AbortExecution($"PARSER EXCEPTION: Expected token type \"{type}\", found \"{token.Type}\"");
 
         return token;
     }

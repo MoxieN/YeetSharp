@@ -11,7 +11,7 @@ public static class Utils
     [DoesNotReturn]
     public static void AbortExecution(string message)
     {
-        Console.Write("EXECUTION HALTED:", Color.Red);
+        Console.Write("EXECUTION HALTED: ", Color.IndianRed);
         Console.WriteLine(message);
         Environment.Exit(1);
     }
@@ -37,6 +37,23 @@ public static class Utils
         Console.WriteFormatted(prefixError, Color.White, error);
         Console.WriteLine(str);
     }
+
+    public static void PrintDebug(string str)
+    {
+        #if DEBUG
+        const string prefixInfo = "{0}DEBUG{1} ";
+
+        var info = new Formatter[]
+        {
+            new("[", Color.LightGreen),
+            new("]", Color.LightGreen)
+        };
+
+        Console.WriteFormatted(prefixInfo, Color.White, info);
+        Console.WriteLine(str);
+        #endif
+    }
+
 
     public static void PrintInfo(string str)
     {

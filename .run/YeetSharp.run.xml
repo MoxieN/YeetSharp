@@ -1,7 +1,7 @@
 <component name="ProjectRunConfigurationManager">
   <configuration default="false" name="YeetSharp" type="DotNetProject" factoryName=".NET Project" singleton="false">
-    <option name="EXE_PATH" value="$PROJECT_DIR$/bin/YeetSharp" />
-    <option name="PROGRAM_PARAMETERS" value="" />
+    <option name="EXE_PATH" value="$PROJECT_DIR$/bin/YeetSharp.exe" />
+    <option name="PROGRAM_PARAMETERS" value="-file test.asm" />
     <option name="WORKING_DIRECTORY" value="$PROJECT_DIR$/bin" />
     <option name="PASS_PARENT_ENVS" value="1" />
     <option name="USE_EXTERNAL_CONSOLE" value="0" />

@@ -1,4 +1,5 @@
-﻿using Yeet.Common;
+﻿using Microsoft.VisualBasic;
+using Yeet.Common;
 using Yeet.Common.Assembler;
 
 namespace YeetSharp;
@@ -7,15 +8,21 @@ public static class Program
 {
     // Arguments
     private static bool _showHelp;
-    private static bool _showRegisters;
+    private static bool _debug;
     private static byte _arch = 64;
+    private static string? _file;
 
     /// <summary>
     /// Program entry point
     /// </summary>
     /// <param name="args">The command line arguments.</param>
-    public static void Main(string[] args)
+    public static void Main(string?[] args)
     {
+        #if DEBUG
+        _debug = true;
+        Utils.PrintDebug("YeetSharp started in DEBUG mode");
+        #endif
+        
         HandleArgs(ref args);
         if (!_showHelp) StartCPU();
     }
@@ -25,7 +32,7 @@ public static class Program
     /// <summary>
     /// Handle every known argument, if any.
     /// </summary>
-    private static void HandleArgs(ref string[] args)
+    private static void HandleArgs(ref string?[] args)
     {
         if (args.Contains("-h")) ShowHelp();
         SetArguments(ref args);
@@ -46,6 +53,12 @@ public static class Program
         Console.WriteLine("-> -regs   | Prints the registers");
         Console.WriteLine("-> -aARCH* | Loads the correct CPU architecture, uses Yeet-64 by default (ex: -a16)");
         Console.WriteLine("'*' = (optional argument)");
+    }
+
+    private static void GetFile(string file)
+    {
+        
+        
     }
 
     /// <summary>
@@ -75,16 +88,24 @@ public static class Program
         }
     }
 
-    private static void SetArguments(ref string[] args)
+    private static void SetArguments(ref string?[] args)
     {
         var archPresent = false;
 
-        foreach (var arg in args)
+        for (var index = 0; index < args.Length; index++)
         {
-            if (arg == "-regs")
+            var arg = args[index];
+            switch (arg)
             {
-                _showRegisters = true;
-                continue;
+                case "-regs":
+                    _debug = true;
+                    continue;
+                case "-file":
+                {
+                    if (!File.Exists(args[index+1])) Utils.AbortLoad("This file doesn't exist.");
+                    _file = args[index + 1];
+                    break;
+                }
             }
 
             if (!arg.StartsWith("-a")) continue;
@@ -104,6 +125,8 @@ public static class Program
                     "This architecture doesn't exist, please refer to the help section using the argument '-h'.");
             }
         }
+
+        if (string.IsNullOrEmpty(_file)) Utils.AbortLoad("Please specify a file.");
     }
 
     #endregion
@@ -114,7 +137,7 @@ public static class Program
     {
         Utils.PrintInfo("Starting Yeet-64 CPU emulation");
 
-        var lexer = new Lexer("test.asm", false, false, false);
+        var lexer = new Lexer(_file, false, false, false);
         var tokens = lexer.Run();
 
         var parser = new Parser(ref tokens, new Yeet64.Instruction());
@@ -128,8 +151,8 @@ public static class Program
 
         Utils.PrintInfo("CPU Emulation ended");
 
-        if (!_showRegisters) return;
-        Utils.PrintInfo("Dumping CPU registers...");
+        if (!_debug) return;
+        Utils.PrintDebug("Dumping CPU registers...");
         Console.WriteLine(Yeet64.Interpreter.Computer.PrintRegisters());
     }
 
@@ -139,7 +162,7 @@ public static class Program
 
         /*Utils.PrintInfo("Starting Yeet-16 CPU emulation");
 
-        var lexer = new Lexer("test.asm", false, false, false);
+        var lexer = new Lexer(_file, false, false, false);
         var tokens = lexer.Run();
 
         var parser = new Parser(ref tokens, new Yeet16.Instruction());
@@ -155,7 +178,7 @@ public static class Program
 
         if (_showRegisters)
         {
-            Utils.PrintInfo("Dumping CPU registers...");
+            Utils.PrintDebug("Dumping CPU registers...");
             Yeet16.Interpreter.Computer.PrintRegisters();
         }*/
     }

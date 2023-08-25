@@ -130,8 +130,8 @@ public static class Executor
                     var isRegister = (instruction & (1U << 26)) != 0;
                     var destination = (instruction >> 22) & ((1U << 4) - 1);
                     var source = instruction & ((1U << 22) - 1);
-                    
-                    Computer.MemoryWrite64(destination, isRegister ? Computer.GetRegister(source) : source);
+
+                    Computer.MemoryWrite64(Computer.GetRegister(destination), isRegister ? Computer.GetRegister(source) : source);
                     break;
                 }
 

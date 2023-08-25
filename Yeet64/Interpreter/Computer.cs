@@ -1,4 +1,3 @@
-using System;
 using System.Text;
 using Yeet.Common;
 
@@ -169,7 +168,6 @@ public static class Computer
         {
             Utils.PrintError($"Port {port} out of range exception");
         }
-        
     }
 
     public static ulong PortRead(ulong port)
@@ -199,14 +197,14 @@ public static class Computer
         {
             case 0: // Emulator shut down
             {
-                Utils.PrintInfo("Syscall 0 received");
+                Utils.PrintDebug("Syscall 0 received");
                 Utils.PrintInfo("Received shut down signal from program");
                 PoweredOn = false;
                 break;
             }
             case 1:
             {
-                Utils.PrintInfo("Syscall 1 received");
+                Utils.PrintDebug("Syscall 1 received");
                 Console.Write((char) R3);
                 break;
             }
