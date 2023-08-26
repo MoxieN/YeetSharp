@@ -1,5 +1,3 @@
-using System;
-using System.Collections.Generic;
 using System.Data;
 using System.Diagnostics;
 
@@ -7,14 +5,14 @@ namespace Yeet.Common.Assembler;
 
 public sealed class Parser
 {
-    private readonly List<Token> _tokens;
     private readonly Instruction _instruction;
+    private readonly List<Token> _tokens;
+
+    private int _index;
 
     private ulong _instructionAddress;
     private ulong _labelAddress;
     private bool _onLabel;
-
-    private int _index;
 
     public Parser(ref List<Token> tokens, Instruction instruction)
     {
@@ -237,7 +235,17 @@ public sealed class Parser
                     break;
                 }
 
-                default: throw new UnreachableException();
+                default:
+                {
+                    // Set dummy values to trick the compiler
+                    opcodeNumber = 0;
+                    opcodeType = 0;
+
+                    if (token.Type == TokenType.Label) break;
+
+                    Utils.AbortLoad($"Unknown instruction found: {token.Text}");
+                    break;
+                }
             }
 
             switch (opcodeType)
@@ -288,6 +296,8 @@ public sealed class Parser
                     code.AddRange(BitConverter.GetBytes(instruction));
                     break;
                 }
+                // This is a dummy OpCode Type, generally used for labels and other assembly related features.
+                case 0: break;
                 default: throw new UnreachableException();
             }
         }
